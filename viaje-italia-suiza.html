@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italia & Suiza 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --warm-white: #faf8f4;
+    --terracotta: #c4603b;
+    --rust: #a84827;
+    --olive: #6b7c4a;
+    --sage: #8fa06b;
+    --dark: #1a1612;
+    --mid: #3d342a;
+    --muted: #8a7d6f;
+    --gold: #c9a84c;
+    --swiss-red: #d4233a;
+    --border: #e0d8cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .hero {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(196,96,59,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(107,124,74,0.2) 0%, transparent 50%);
+  }
+  .hero-inner { position: relative; max-width: 900px; margin: 0 auto; }
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(38px, 6vw, 72px);
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-dates {
+    font-size: 14px;
+    color: rgba(245,240,232,0.6);
+    letter-spacing: 1px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .hero-dates span { display: flex; align-items: center; gap: 8px; }
+  .hero-dates strong { color: var(--cream); }
+
+  /* NAV TABS */
+  .tabs {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .tabs-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 16px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn:hover { color: var(--dark); }
+  .tab-btn.active {
+    color: var(--terracotta);
+    border-bottom-color: var(--terracotta);
+  }
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* SECTION HEADERS */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 32px;
+  }
+
+  /* TIMELINE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 120px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .day-block {
+    display: flex;
+    gap: 0;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .day-label {
+    width: 120px;
+    flex-shrink: 0;
+    padding: 18px 20px 18px 0;
+    text-align: right;
+  }
+  .day-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .day-name {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 2px;
+  }
+
+  .day-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    flex-shrink: 0;
+    margin-top: 23px;
+    margin-left: -5px;
+    z-index: 1;
+    position: relative;
+  }
+  .day-dot.transit { background: var(--gold); }
+  .day-dot.swiss { background: var(--swiss-red); }
+  .day-dot.start-end { background: var(--olive); }
+
+  .day-card {
+    flex: 1;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 6px 0 6px 20px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .day-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .day-card-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .day-card-header-left { flex: 1; }
+  .day-chevron {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.25s;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .day-card.open .day-chevron { transform: rotate(180deg); }
+
+  .day-card-detail {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 14px 20px 16px;
+    background: rgba(245,240,232,0.5);
+  }
+  .day-card.open .day-card-detail { display: block; }
+
+  .detail-section { margin-bottom: 12px; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .detail-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    margin: 3px 4px 3px 0;
+  }
+  .detail-link.maps { background: rgba(196,96,59,0.12); color: var(--rust); }
+  .detail-link.maps:hover { background: rgba(196,96,59,0.22); }
+  .detail-link.booking { background: rgba(107,124,74,0.12); color: var(--olive); }
+  .detail-link.booking:hover { background: rgba(107,124,74,0.22); }
+  .detail-link.ticket { background: rgba(201,168,76,0.15); color: #7a5c10; }
+  .detail-link.ticket:hover { background: rgba(201,168,76,0.28); }
+  .detail-info {
+    font-size: 12px;
+    color: var(--mid);
+    line-height: 1.6;
+  }
+  .detail-info span { color: var(--muted); margin-right: 4px; }
+  .detail-reserva {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--border);
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+  .detail-warning {
+    font-size: 11px;
+    color: #8a6a1a;
+    background: rgba(201,168,76,0.12);
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 6px;
+  }
+
+  /* iPhone banner */
+  .iphone-banner {
+    background: var(--dark);
+    color: var(--cream);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .iphone-banner-icon { font-size: 28px; flex-shrink: 0; }
+  .iphone-banner-title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .iphone-banner-steps { font-size: 12px; color: rgba(245,240,232,0.7); line-height: 1.8; }
+  .iphone-banner-steps b { color: var(--cream); }
+
+
+  .day-city {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dark);
+    letter-spacing: 0.3px;
+  }
+  .day-transport {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 500;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+  .day-activities {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .activity-pill {
+    font-size: 11px;
+    background: rgba(196,96,59,0.1);
+    color: var(--rust);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .activity-pill.paid {
+    background: rgba(201,168,76,0.15);
+    color: #8a6a1a;
+  }
+  .aloj-info {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .info-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .info-card.color-terra::before { background: var(--terracotta); }
+  .info-card.color-gold::before { background: var(--gold); }
+  .info-card.color-olive::before { background: var(--olive); }
+  .info-card.color-red::before { background: var(--swiss-red); }
+
+  .card-city {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .card-type {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 6px 0;
+    border-top: 1px solid var(--border);
+  }
+  .card-row-label { color: var(--muted); }
+  .card-row-value { font-weight: 500; color: var(--dark); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .badge.paid { background: rgba(107,124,74,0.15); color: var(--olive); }
+  .badge.partial { background: rgba(201,168,76,0.15); color: #8a6a1a; }
+  .badge.pending { background: rgba(196,96,59,0.12); color: var(--rust); }
+  .card-link {
+    display: block;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--terracotta);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .card-link:hover { text-decoration: underline; }
+  .card-reserva {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: monospace;
+    letter-spacing: 1px;
+  }
+
+  /* TRANSPORT */
+  .transport-item {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .transport-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .transport-icon.avion { background: rgba(212,35,58,0.1); }
+  .transport-icon.tren { background: rgba(201,168,76,0.15); }
+  .transport-icon.auto { background: rgba(107,124,74,0.15); }
+
+  .transport-route { }
+  .transport-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .transport-detail {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .transport-flow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+  .transport-place { color: var(--dark); font-weight: 500; }
+  .transport-arrow { color: var(--muted); }
+  .transport-cost { text-align: right; }
+  .cost-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--dark);
+  }
+  .cost-currency { font-size: 11px; color: var(--muted); }
+  .transport-reserva {
+    font-size: 10px;
+    color: var(--terracotta);
+    font-family: monospace;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ACTIVIDADES */
+  .activity-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .activity-date-block {
+    text-align: center;
+    flex-shrink: 0;
+    width: 52px;
+  }
+  .activity-day-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--terracotta);
+  }
+  .activity-month {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .activity-body { flex: 1; }
+  .activity-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+  .activity-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .activity-footer {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .activity-price {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  /* GASTOS */
+  .budget-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .budget-box {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .budget-box-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .budget-box-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--dark);
+    line-height: 1;
+  }
+  .budget-box-currency {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .budget-breakdown { }
+  .budget-category {
+    margin-bottom: 28px;
+  }
+  .budget-cat-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(224,216,204,0.4);
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-row-name { color: var(--dark); }
+  .budget-row-amount {
+    font-weight: 500;
+    color: var(--mid);
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .budget-row-currency { color: var(--muted); font-size: 11px; }
+
+  /* EXTRAS */
+  .extras-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .extras-info { }
+  .extras-name { font-size: 14px; font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+  .extras-sub { font-size: 12px; color: var(--muted); }
+  .extras-right { text-align: right; flex-shrink: 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 20px; }
+    .timeline::before { left: 70px; }
+    .day-label { width: 70px; }
+    .day-num { font-size: 18px; }
+    .transport-item { grid-template-columns: auto 1fr; }
+    .transport-cost { grid-column: 2; }
+  }
+
+  /* MAPS */
+  .maps-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .maps-row:last-child { border-bottom: none; }
+  .maps-city {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .maps-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dark);
+  }
+  .maps-btn {
+    flex-shrink: 0;
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--terracotta);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .maps-btn:hover { background: var(--rust); }
+
+
+  .section.active .info-card,
+  .section.active .transport-item,
+  .section.active .activity-card,
+  .section.active .day-block,
+  .section.active .budget-box {
+    animation: fadeUp 0.3s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section.active .info-card:nth-child(2) { animation-delay: 0.05s; }
+  .section.active .info-card:nth-child(3) { animation-delay: 0.1s; }
+  .section.active .info-card:nth-child(4) { animation-delay: 0.15s; }
+  .section.active .info-card:nth-child(5) { animation-delay: 0.2s; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">✈ Viaje 2025</div>
+    <h1>Italia &amp; <em>Suiza</em></h1>
+    <div class="hero-dates">
+      <span>📅 <strong>12 May — 3 Jun 2025</strong></span>
+      <span>🌍 <strong>11 ciudades</strong></span>
+      <span>🏨 <strong>11 alojamientos</strong></span>
+      <span>⏱ <strong>22 noches</strong></span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="showTab('itinerario')">📋 Itinerario</button>
+    <button class="tab-btn" onclick="showTab('alojamientos')">🏨 Alojamientos</button>
+    <button class="tab-btn" onclick="showTab('transportes')">🚆 Transportes</button>
+    <button class="tab-btn" onclick="showTab('actividades')">🎟 Actividades</button>
+    <button class="tab-btn" onclick="showTab('gastos')">💶 Gastos</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ITINERARIO -->
+  <div id="itinerario" class="section active">
+    <div class="section-title">Itinerario General</div>
+    <div class="section-sub">Tocá cada día para ver todos los detalles y links · 12 mayo — 4 junio</div>
+
+    <div class="timeline">
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">12</div><div class="day-name">Lun · May</div></div>
+        <div class="day-dot start-end"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇦🇷 Buenos Aires</div>
+              <div class="day-activities"><span class="activity-pill">Noche previa al vuelo</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Hotel</span> Like a Home — dos habitaciones</div>
+              <div class="detail-reserva">Nº 10871299</div>
+              <div class="detail-warning">⚠️ Pagar el resto en el alojamiento (seña ya pagada: $40.000 arg)</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/zzgTy9Af9cP7gQaSA" target="_blank">📍 Maps · Hotel</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/BKZZCZkip52QBoC88" target="_blank">📍 Maps · Estacionamiento</a>
+              <a class="detail-link booking" href="https://www.likeathomeezeiza.com/" target="_blank">🔗 Ver reserva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">13</div><div class="day-name">Mar · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">✈️ Buenos Aires → Roma</div>
+              <div class="day-transport">ITA Airways AZ681 · Sale 12:55 · Llega 14 May 6:40</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">✈️ Vuelo</div>
+              <div class="detail-info"><span>Vuelo</span> ITA Airways AZ681</div>
+              <div class="detail-info"><span>Sale</span> 12:55 hs · Ezeiza (EZE)</div>
+              <div class="detail-info"><span>Llega</span> 6:40 hs (14 May) · Roma Fiumicino (FCO)</div>
+              <div class="detail-reserva">Nº XKAHQR</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento al llegar</div>
+              <div class="detail-info"><span>Depto Booking</span> · Check-in 9:30 hs</div>
+              <div class="detail-reserva">Nº 5644395552</div>
+              <div class="detail-warning">⚠️ Tasa turística: 72 USD (6 USD/p/noche) — pagar al llegar</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/pMi3B2nsCqY26iTq5" target="_blank">📍 Maps · Depto Roma</a>
+              <a class="detail-link booking" href="https://www.booking.com/hotel/it/soggiornoeuropa.es.html" target="_blank">🔗 Ver reserva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">14</div><div class="day-name">Mié · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Roma</div>
+              <div class="day-activities">
+                <span class="activity-pill">Panteón</span>
+                <span class="activity-pill">Plaza Navona</span>
+                <span class="activity-pill">Plaza España</span>
+              </div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">📍 Lugares del día</div>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/3DxPFqkGWxqFqkGW6" target="_blank">📍 Panteón</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/pMi3B2nsCqY26iTq5" target="_blank">📍 Depto (alojamiento)</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">15</div><div class="day-name">Jue · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Roma</div>
+              <div class="day-activities">
+                <span class="activity-pill paid">🎟 Vaticano 9:00 hs</span>
+                <span class="activity-pill">Basílica San Pedro</span>
+                <span class="activity-pill">Castillo Sant'Angelo</span>
+              </div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🎟 Entrada reservada</div>
+              <div class="detail-info"><span>Museos Vaticanos</span> · 9:00 hs · €160</div>
+              <div class="detail-reserva">Nº 2L2N0U4E2JVMU3O4W1</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/yKKCaqjiX5bidTEYA" target="_blank">📍 Maps · Vaticano</a>
+              <a class="detail-link ticket" href="https://www.museivaticani.va/" target="_blank">🎟 Web entrada</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">16</div><div class="day-name">Vie · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Roma</div>
+              <div class="day-activities">
+                <span class="activity-pill paid">🎟 Coliseo 12:15 hs</span>
+                <span class="activity-pill">Foro Romano</span>
+                <span class="activity-pill">Palatino</span>
+              </div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🎟 Entrada reservada</div>
+              <div class="detail-info"><span>Coliseo + Foro + Palatino</span> · 12:15 hs · €72</div>
+              <div class="detail-reserva">Nº SPCOE37872X2N7N2</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/NHa3czpc8KC3kW2u8" target="_blank">📍 Maps · Coliseo</a>
+              <a class="detail-link ticket" href="https://ticketing.colosseo.it/" target="_blank">🎟 Web entrada</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">17</div><div class="day-name">Sáb · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚆 Roma → Bari → Matera</div>
+              <div class="day-transport">Tren 8:00 · Frecciargento 8303 · 🚗 Auto en Bari</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚆 Tren Roma → Bari</div>
+              <div class="detail-info"><span>Frecciargento 8303</span></div>
+              <div class="detail-info"><span>Sale</span> 8:00 · Roma Termini → Bari Centrale 12:41</div>
+              <div class="detail-reserva">Nº ZMAJLN</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🚗 Auto · NOLEGGIARE · Ford Puma</div>
+              <div class="detail-info"><span>Retiro</span> Bari · 13:00 hs</div>
+              <div class="detail-reserva">Nº DG 95851</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>B&B Giulietta nei Sassi</span> · Check-in 14:00</div>
+              <div class="detail-reserva">Nº 178998959</div>
+              <div class="detail-warning">⚠️ Tasa turística: 8€ — pagar al llegar</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/piD1xsNjZNkDif1BA" target="_blank">📍 Maps · Retiro auto</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/nmpFrUkPJFEyEhs3A" target="_blank">📍 Maps · B&B Matera</a>
+              <a class="detail-link booking" href="https://giuliettaneisassi.it/" target="_blank">🔗 Ver reserva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">18</div><div class="day-name">Dom · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Matera → Torre Santa Sabina</div>
+              <div class="day-transport">Ford Puma · Check-in 15:00</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Hotel Mirage Puglia</span> · dos habitaciones</div>
+              <div class="detail-info"><span>Check-in</span> 15:00 · Check-out 20 May 10:00</div>
+              <div class="detail-reserva">Nº 4E686DC846</div>
+              <div class="detail-warning">⚠️ Tasa turística: 18€ (1.5€/p/noche) — pagar al llegar. Ya pagados 144€ de señas.</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/2JghoVLMkqgAQPnY7" target="_blank">📍 Maps · Hotel</a>
+              <a class="detail-link booking" href="https://www.hotelmiragepuglia.it/" target="_blank">🔗 Ver reserva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">19</div><div class="day-name">Lun · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Torre Santa Sabina</div>
+              <div class="day-activities"><span class="activity-pill">Playa · relax en Puglia</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/2JghoVLMkqgAQPnY7" target="_blank">📍 Maps · Hotel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">20</div><div class="day-name">Mar · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Torre Santa Sabina → Bari</div>
+              <div class="day-transport">Devolución auto 13:00 · Check-in depto 15:00</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚗 Devolución auto · NOLEGGIARE</div>
+              <div class="detail-info"><span>Bari</span> · 13:00 hs</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Airbnb</span> · Check-in 15:00 (podemos llegar antes)</div>
+              <div class="detail-reserva">Nº HM3KJFZJS8</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/piD1xsNjZNkDif1BA" target="_blank">📍 Maps · Devolución auto</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/Wg6JUS7cSa8ixqfg9" target="_blank">📍 Maps · Depto Bari</a>
+              <a class="detail-link booking" href="https://www.airbnb.com.ar/rooms/1102196166254741864" target="_blank">🔗 Ver Airbnb</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">21</div><div class="day-name">Mié · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚆 Bari → Florencia</div>
+              <div class="day-transport">ITALO 9928 · Sale 6:50 · Llega 13:17</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚆 Tren Bari → Florencia</div>
+              <div class="detail-info"><span>ITALO 9928</span></div>
+              <div class="detail-info"><span>Sale</span> 6:50 · Bari Centrale → Florencia SMN 13:17</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Airbnb</span> · Check-in 15:00 (podemos llegar antes)</div>
+              <div class="detail-reserva">Nº HMDREHB8BM</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/PUqiCUgd6QuRrCnp6" target="_blank">📍 Maps · Depto Florencia</a>
+              <a class="detail-link booking" href="https://www.airbnb.com.ar/rooms/1230933820975281883" target="_blank">🔗 Ver Airbnb</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">22</div><div class="day-name">Jue · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Florencia</div>
+              <div class="day-activities">
+                <span class="activity-pill paid">🎟 Accademia 8:30 hs</span>
+              </div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🎟 Entrada reservada</div>
+              <div class="detail-info"><span>Galleria dell'Accademia</span> · 8:30 hs · €96</div>
+              <div class="detail-reserva">Nº 22255479</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/32XTYPGutm1fTowd7" target="_blank">📍 Maps · Accademia</a>
+              <a class="detail-link ticket" href="https://www.galleriaaccademiafirenze.it/" target="_blank">🎟 Web entrada</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">23</div><div class="day-name">Vie · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Florencia → Toscana</div>
+              <div class="day-transport">EUROPCAR VW T-ROC · Retiro 8:00</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚗 Auto · EUROPCAR · VW T-ROC</div>
+              <div class="detail-info"><span>Retiro</span> Florencia · 8:00 hs</div>
+              <div class="detail-info"><span>Devolución</span> 25 May · Verona/zona</div>
+              <div class="detail-reserva">Nº 1200175699</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Pensieri di Cavatina</span> · Agroturismo · Check-in 15:00</div>
+              <div class="detail-reserva">Nº 6574</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/sch68R64gTtL2UyeA" target="_blank">📍 Maps · Retiro auto</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/o8y7PFWKZR5eCvdD7" target="_blank">📍 Maps · Agroturismo</a>
+              <a class="detail-link booking" href="https://pensieridicavatina.it/" target="_blank">🔗 Ver reserva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">24</div><div class="day-name">Sáb · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Toscana</div>
+              <div class="day-activities"><span class="activity-pill">Día libre en el agriturismo</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/o8y7PFWKZR5eCvdD7" target="_blank">📍 Maps · Agroturismo</a>
+              <a class="detail-link booking" href="https://pensieridicavatina.it/" target="_blank">🔗 Web alojamiento</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">25</div><div class="day-name">Dom · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Toscana → Verona</div>
+              <div class="day-transport">Devolución VW T-ROC · Depto Cami</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚗 Devolución auto · EUROPCAR</div>
+              <div class="detail-info"><span>Verona / zona</span> · Check-out agriturismo 11:00</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Departamento Cami</span> · Verona</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/X3sHTkj2ndvQDZ2J8" target="_blank">📍 Maps · Devolución auto</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">26</div><div class="day-name">Lun · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Verona</div>
+              <div class="day-activities"><span class="activity-pill">Explorar Verona</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-info">Día libre en Verona — Arena, Casa de Julieta, centro histórico.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">27</div><div class="day-name">Mar · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Verona</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-info">Día libre en Verona.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">28</div><div class="day-name">Mié · May</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Verona</div>
+              <div class="day-activities"><span class="activity-pill">¿Compras?</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-info">Último día en Verona. Mañana temprano sale el auto.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">29</div><div class="day-name">Jue · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Verona → Lucerna</div>
+              <div class="day-transport">BUDGET VW T-Cross · Retiro 8:00</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚗 Auto · BUDGET · VW T-Cross</div>
+              <div class="detail-info"><span>Retiro</span> Verona · 8:00 hs</div>
+              <div class="detail-info"><span>Devolución</span> 2 Jun · Milán</div>
+              <div class="detail-reserva">Nº 42075273IT2</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Airbnb Lucerna</span> · 1 dorm. + sofá cama · Check-in 15:00</div>
+              <div class="detail-reserva">Nº HMYN8XZ3SR</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/3xB8GeXxnjwLmwTQ6" target="_blank">📍 Maps · Retiro auto</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/8vyHfS3FGZKEpr9J8" target="_blank">📍 Maps · Depto Lucerna</a>
+              <a class="detail-link booking" href="https://www.airbnb.com.ar/rooms/48203659" target="_blank">🔗 Ver Airbnb</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">30</div><div class="day-name">Vie · May</div></div>
+        <div class="day-dot swiss"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇨🇭 Lucerna</div>
+              <div class="day-activities"><span class="activity-pill">Lago · Puente de madera</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/8vyHfS3FGZKEpr9J8" target="_blank">📍 Maps · Depto</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">31</div><div class="day-name">Sáb · May</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Lucerna → Interlaken</div>
+              <div class="day-transport">Check-in Brienzer Burli · 15:00</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Brienzer Burli</span> · 2 dormitorios · Desayuno incluido</div>
+              <div class="detail-reserva">Nº SB4-CFDDF81388</div>
+              <div class="detail-warning">⚠️ Tasa turística: 24.80 CHF (3.10 CHF/p/noche)</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/1775NhweeVCM9ms39" target="_blank">📍 Maps · Hotel</a>
+              <a class="detail-link booking" href="https://www.brienzerburli.ch/" target="_blank">🔗 Ver reserva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">1</div><div class="day-name">Dom · Jun</div></div>
+        <div class="day-dot swiss"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇨🇭 Interlaken</div>
+              <div class="day-activities"><span class="activity-pill">Jungfrau · Lago Thun</span></div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/1775NhweeVCM9ms39" target="_blank">📍 Maps · Hotel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">2</div><div class="day-name">Lun · Jun</div></div>
+        <div class="day-dot transit"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🚗 Interlaken → Milán</div>
+              <div class="day-transport">VW T-Cross · Devolución en Milán</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🚗 Devolución auto · BUDGET</div>
+              <div class="detail-info"><span>Milán</span> · Check-out hotel 11:00</div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-label">🏨 Alojamiento</div>
+              <div class="detail-info"><span>Airbnb Milán</span> · 1 dorm. + sofá cama · Check-in 15:00</div>
+              <div class="detail-reserva">Nº HMP5MEYTHA</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/c7PnWTCTWetR2y7A" target="_blank">📍 Maps · Devolución auto</a>
+              <a class="detail-link maps" href="https://maps.app.goo.gl/CCNKQgJDBjpyZeuQ6" target="_blank">📍 Maps · Depto Milán</a>
+              <a class="detail-link booking" href="https://www.airbnb.com.ar/rooms/1604150325871671903" target="_blank">🔗 Ver Airbnb</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">3</div><div class="day-name">Mar · Jun</div></div>
+        <div class="day-dot"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">🇮🇹 Milán</div>
+              <div class="day-activities">
+                <span class="activity-pill paid">🎟 Duomo di Milano 16:30</span>
+              </div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">🎟 Entrada reservada</div>
+              <div class="detail-info"><span>Duomo di Milano</span> · 16:30 hs · €104</div>
+              <div class="detail-reserva">Nº OFD3670294</div>
+            </div>
+            <div class="detail-section">
+              <a class="detail-link maps" href="https://maps.app.goo.gl/2qK33nBZwNPZFi1G7" target="_blank">📍 Maps · Duomo</a>
+              <a class="detail-link ticket" href="https://ticket.duomomilano.it/" target="_blank">🎟 Web entrada</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="day-block">
+        <div class="day-label"><div class="day-num">4</div><div class="day-name">Mié · Jun</div></div>
+        <div class="day-dot start-end"></div>
+        <div class="day-card">
+          <div class="day-card-header">
+            <div class="day-card-header-left">
+              <div class="day-city">✈️ Milán → Buenos Aires</div>
+              <div class="day-transport">ITA Airways AZ2059/AZ680 · Sale 16:00</div>
+            </div>
+            <div class="day-chevron">▼</div>
+          </div>
+          <div class="day-card-detail">
+            <div class="detail-section">
+              <div class="detail-label">✈️ Vuelo de regreso</div>
+              <div class="detail-info"><span>ITA Airways AZ2059 / AZ680</span></div>
+              <div class="detail-info"><span>Sale</span> 16:00 · Milán MXP → Buenos Aires EZE</div>
+              <div class="detail-reserva">Nº XKAHQR</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ALOJAMIENTOS -->
+  <div id="alojamientos" class="section">
+    <div class="section-title">Alojamientos</div>
+    <div class="section-sub">11 alojamientos · Tocá 📍 para abrir Maps directo</div>
+    <div class="cards-grid">
+
+      <div class="info-card color-olive">
+        <div class="card-city">Buenos Aires · 12 May</div>
+        <div class="card-name">Hotel dos habitaciones</div>
+        <div class="card-type">Like a Home Ezeiza</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">12 May · 14:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">13 May · 10:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">USD 180</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge partial">SEÑADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">Transferencia</span></div>
+        <div class="card-reserva">Nº 10871299</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.likeathomeezeiza.com/" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/zzgTy9Af9cP7gQaSA" target="_blank">📍 Maps hotel</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/BKZZCZkip52QBoC88" target="_blank">📍 Maps estacionamiento</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ Seña $40.000 arg · Pagar resto en el alojamiento</div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Roma · 13–17 May</div>
+        <div class="card-name">Departamento Soggiorno Europa</div>
+        <div class="card-type">1 dormitorio + sofá cama · Booking</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">13 May · 9:30 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">17 May · 10:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">€874</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">PayPal</span></div>
+        <div class="card-reserva">Nº 5644395552</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.booking.com/hotel/it/soggiornoeuropa.es.html" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/pMi3B2nsCqY26iTq5" target="_blank">📍 Maps</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ Tasa turística: 6 USD/persona/noche (72 USD) · Se paga al llegar</div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Matera · 17–18 May</div>
+        <div class="card-name">Giulietta nei Sassi</div>
+        <div class="card-type">B&B dos habitaciones</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">17 May · 14:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">18 May · 10:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">€149</span></div>
+        <div class="card-row"><span class="card-row-label">Desayuno</span><span class="card-row-value">✅ Incluido</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-reserva">Nº 178998959</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://giuliettaneisassi.it/" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/nmpFrUkPJFEyEhs3A" target="_blank">📍 Maps</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ Tasa turística: 8€ · Se paga al llegar</div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Torre Santa Sabina · 18–20 May</div>
+        <div class="card-name">Hotel Mirage Puglia</div>
+        <div class="card-type">Hotel dos habitaciones</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">18 May · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">20 May · 10:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">€480</span></div>
+        <div class="card-row"><span class="card-row-label">Desayuno</span><span class="card-row-value">✅ Incluido</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge partial">SEÑADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">A.Express</span></div>
+        <div class="card-reserva">Nº 4E686DC846</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.hotelmiragepuglia.it/" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/2JghoVLMkqgAQPnY7" target="_blank">📍 Maps</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ Tasa turística: 18€ (1.5€/p/noche) · Ya pagados 144€</div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Bari · 20–21 May</div>
+        <div class="card-name">Departamento Airbnb</div>
+        <div class="card-type">Airbnb</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">20 May · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">21 May · 10:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">USD 222.55</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">VISA</span></div>
+        <div class="card-reserva">Nº HM3KJFZJS8</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.airbnb.com.ar/rooms/1102196166254741864" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/Wg6JUS7cSa8ixqfg9" target="_blank">📍 Maps</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">ℹ️ Podemos llegar antes</div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Florencia · 21–23 May</div>
+        <div class="card-name">Departamento Airbnb</div>
+        <div class="card-type">Airbnb</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">21 May · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">23 May · 11:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">USD 585.77</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">VISA</span></div>
+        <div class="card-reserva">Nº HMDREHB8BM</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.airbnb.com.ar/rooms/1230933820975281883" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/PUqiCUgd6QuRrCnp6" target="_blank">📍 Maps</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">ℹ️ Podemos llegar antes</div>
+      </div>
+
+      <div class="info-card color-olive">
+        <div class="card-city">Toscana · 23–25 May</div>
+        <div class="card-name">Pensieri di Cavatina</div>
+        <div class="card-type">Departamento Agroturismo</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">23 May · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">25 May · 11:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">€600 + USD 600</span></div>
+        <div class="card-row"><span class="card-row-label">Desayuno</span><span class="card-row-value">✅ Incluido</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-reserva">Nº 6574</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://pensieridicavatina.it/" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/o8y7PFWKZR5eCvdD7" target="_blank">📍 Maps</a>
+        </div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Verona · 25–29 May</div>
+        <div class="card-name">Departamento Cami</div>
+        <div class="card-type">Alojamiento particular</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">25 May</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">29 May</span></div>
+        <div class="card-row"><span class="card-row-label">Desayuno</span><span class="card-row-value">❌ No incluido</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge partial">PENDIENTE</span></div>
+      </div>
+
+      <div class="info-card color-red">
+        <div class="card-city">Lucerna · 29–31 May</div>
+        <div class="card-name">Departamento Airbnb</div>
+        <div class="card-type">1 dormitorio + sofá cama · Airbnb</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">29 May · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">31 May · 11:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">USD 621.62</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">A.Express</span></div>
+        <div class="card-reserva">Nº HMYN8XZ3SR</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.airbnb.com.ar/rooms/48203659" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/8vyHfS3FGZKEpr9J8" target="_blank">📍 Maps</a>
+        </div>
+      </div>
+
+      <div class="info-card color-red">
+        <div class="card-city">Interlaken · 31 May – 2 Jun</div>
+        <div class="card-name">Brienzer Burli</div>
+        <div class="card-type">Departamento 2 dormitorios</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">31 May · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">2 Jun · 11:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">USD 778.34</span></div>
+        <div class="card-row"><span class="card-row-label">Desayuno</span><span class="card-row-value">✅ Incluido</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-reserva">Nº SB4-CFDDF81388</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.brienzerburli.ch/" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/1775NhweeVCM9ms39" target="_blank">📍 Maps</a>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ Tasa turística: 24.80 CHF (3.10 CHF/p/noche)</div>
+      </div>
+
+      <div class="info-card color-terra">
+        <div class="card-city">Milán · 2–4 Jun</div>
+        <div class="card-name">Departamento Airbnb</div>
+        <div class="card-type">1 dormitorio + sofá cama · Airbnb</div>
+        <div class="card-row"><span class="card-row-label">Check-in</span><span class="card-row-value">2 Jun · 15:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Check-out</span><span class="card-row-value">4 Jun · 10:00 hs</span></div>
+        <div class="card-row"><span class="card-row-label">Costo</span><span class="card-row-value">USD 465.49</span></div>
+        <div class="card-row"><span class="card-row-label">Estado</span><span class="badge paid">PAGADO</span></div>
+        <div class="card-row"><span class="card-row-label">Pago</span><span class="card-row-value">A.Express</span></div>
+        <div class="card-reserva">Nº HMP5MEYTHA</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <a class="card-link" style="margin:0" href="https://www.airbnb.com.ar/rooms/1604150325871671903" target="_blank">🔗 Reserva</a>
+          <a class="card-link" style="margin:0" href="https://maps.app.goo.gl/CCNKQgJDBjpyZeuQ6" target="_blank">📍 Maps</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TRANSPORTES -->
+  <div id="transportes" class="section">
+    <div class="section-title">Transportes</div>
+    <div class="section-sub">7 trayectos · Vuelos, trenes y autos</div>
+
+    <div class="transport-item">
+      <div class="transport-icon avion">✈️</div>
+      <div class="transport-route">
+        <div class="transport-name">ITA Airways AZ681</div>
+        <div class="transport-flow">
+          <span class="transport-place">Buenos Aires</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Roma</span>
+        </div>
+        <div class="transport-detail">13 May · Sale 12:55 · Llega 14 May 6:40 · PayPal</div>
+        <div class="transport-reserva">Nº XKAHQR</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">5.295</div>
+        <div class="cost-currency">USD</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+    <div class="transport-item">
+      <div class="transport-icon tren">🚆</div>
+      <div class="transport-route">
+        <div class="transport-name">Frecciargento 8303</div>
+        <div class="transport-flow">
+          <span class="transport-place">Roma Termini</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Bari Centrale</span>
+        </div>
+        <div class="transport-detail">17 May · Sale 8:00 · Llega 12:41 · VISA</div>
+        <div class="transport-reserva">Nº ZMAJLN</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">96</div>
+        <div class="cost-currency">USD</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+    <div class="transport-item">
+      <div class="transport-icon auto">🚗</div>
+      <div class="transport-route">
+        <div class="transport-name">NOLEGGIARE J1 · Ford Puma</div>
+        <div class="transport-flow">
+          <span class="transport-place">Bari</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Bari</span>
+        </div>
+        <div class="transport-detail">17 May 13:00 → 20 May 13:00 · A.Express</div>
+        <div class="transport-reserva">Nº DG 95851</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">390</div>
+        <div class="cost-currency">USD</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+    <div class="transport-item">
+      <div class="transport-icon tren">🚆</div>
+      <div class="transport-route">
+        <div class="transport-name">ITALO 9928</div>
+        <div class="transport-flow">
+          <span class="transport-place">Bari Centrale</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Florencia SMN</span>
+        </div>
+        <div class="transport-detail">21 May · Sale 6:50 · Llega 13:17 · A.Express</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">260</div>
+        <div class="cost-currency">EUR</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+    <div class="transport-item">
+      <div class="transport-icon auto">🚗</div>
+      <div class="transport-route">
+        <div class="transport-name">EUROPCAR · Volkswagen T-ROC</div>
+        <div class="transport-flow">
+          <span class="transport-place">Florencia</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Verona</span>
+        </div>
+        <div class="transport-detail">23 May 8:00 → 25 May · Transferencia</div>
+        <div class="transport-reserva">Nº 1200175699</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">377.625</div>
+        <div class="cost-currency">ARS</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+    <div class="transport-item">
+      <div class="transport-icon auto">🚗</div>
+      <div class="transport-route">
+        <div class="transport-name">BUDGET · VW T-Cross</div>
+        <div class="transport-flow">
+          <span class="transport-place">Verona</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Milán</span>
+        </div>
+        <div class="transport-detail">29 May 8:00 → 2 Jun 15:00 · Transferencia</div>
+        <div class="transport-reserva">Nº 42075273IT2</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">698.250</div>
+        <div class="cost-currency">ARS</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+    <div class="transport-item">
+      <div class="transport-icon avion">✈️</div>
+      <div class="transport-route">
+        <div class="transport-name">ITA Airways AZ2059 / AZ680</div>
+        <div class="transport-flow">
+          <span class="transport-place">Milán</span>
+          <span class="transport-arrow">→</span>
+          <span class="transport-place">Buenos Aires</span>
+        </div>
+        <div class="transport-detail">4 Jun · Sale 16:00 · PayPal</div>
+        <div class="transport-reserva">Nº XKAHQR</div>
+      </div>
+      <div class="transport-cost">
+        <div class="cost-amount">—</div>
+        <div class="cost-currency">incluido</div>
+        <div class="badge paid" style="margin-top:6px;">PAGADO</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ACTIVIDADES -->
+  <div id="actividades" class="section">
+    <div class="section-title">Actividades con Entrada</div>
+    <div class="section-sub">4 actividades reservadas · Total: €432</div>
+
+    <div class="activity-card">
+      <div class="activity-date-block">
+        <div class="activity-day-num">15</div>
+        <div class="activity-month">May</div>
+      </div>
+      <div class="activity-body">
+        <div class="activity-name">Museos Vaticanos</div>
+        <div class="activity-meta">🕘 9:00 hs · Roma</div>
+        <div class="activity-footer">
+          <div class="activity-price">€160</div>
+          <span class="badge paid">PAGADO · VISA</span>
+          <span style="font-size:11px;color:var(--muted);font-family:monospace;">2L2N0U4E2JVMU3O4W1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-date-block">
+        <div class="activity-day-num">16</div>
+        <div class="activity-month">May</div>
+      </div>
+      <div class="activity-body">
+        <div class="activity-name">Coliseo + Foro Romano + Palatino</div>
+        <div class="activity-meta">🕐 12:15 hs · Roma</div>
+        <div class="activity-footer">
+          <div class="activity-price">€72</div>
+          <span class="badge paid">PAGADO · VISA</span>
+          <span style="font-size:11px;color:var(--muted);font-family:monospace;">SPCOE37872X2N7N2</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-date-block">
+        <div class="activity-day-num">22</div>
+        <div class="activity-month">May</div>
+      </div>
+      <div class="activity-body">
+        <div class="activity-name">Galleria dell'Accademia</div>
+        <div class="activity-meta">🕘 8:30 hs · Florencia</div>
+        <div class="activity-footer">
+          <div class="activity-price">€96</div>
+          <span class="badge paid">PAGADO · VISA</span>
+          <span style="font-size:11px;color:var(--muted);font-family:monospace;">22255479</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-date-block">
+        <div class="activity-day-num">3</div>
+        <div class="activity-month">Jun</div>
+      </div>
+      <div class="activity-body">
+        <div class="activity-name">Duomo di Milano</div>
+        <div class="activity-meta">🕔 16:30 hs · Milán</div>
+        <div class="activity-footer">
+          <div class="activity-price">€104</div>
+          <span class="badge paid">PAGADO · A.Express</span>
+          <span style="font-size:11px;color:var(--muted);font-family:monospace;">OFD3670294</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- GASTOS -->
+  <div id="gastos" class="section">
+    <div class="section-title">Resumen de Gastos</div>
+    <div class="section-sub">Total estimado del viaje</div>
+
+    <div class="budget-overview">
+      <div class="budget-box">
+        <div class="budget-box-label">Alojamientos</div>
+        <div class="budget-box-amount">4.328</div>
+        <div class="budget-box-currency">USD + €1.229</div>
+      </div>
+      <div class="budget-box">
+        <div class="budget-box-label">Transportes</div>
+        <div class="budget-box-amount">5.781</div>
+        <div class="budget-box-currency">USD + €260 + $1.075.875 arg</div>
+      </div>
+      <div class="budget-box">
+        <div class="budget-box-label">Actividades</div>
+        <div class="budget-box-amount">432</div>
+        <div class="budget-box-currency">EUR</div>
+      </div>
+      <div class="budget-box">
+        <div class="budget-box-label">Adicionales</div>
+        <div class="budget-box-amount">488</div>
+        <div class="budget-box-currency">USD + $270.000 arg</div>
+      </div>
+    </div>
+
+    <div class="budget-breakdown">
+
+      <div class="budget-category">
+        <div class="budget-cat-title">🏨 Alojamientos (USD)</div>
+        <div class="budget-row"><span class="budget-row-name">Buenos Aires</span><span class="budget-row-amount">180 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Roma</span><span class="budget-row-amount">874 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Matera</span><span class="budget-row-amount">173 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Puglia (Hotel + señado)</span><span class="budget-row-amount">557 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Bari</span><span class="budget-row-amount">222.55 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Florencia</span><span class="budget-row-amount">585.77 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Toscana</span><span class="budget-row-amount">600 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Lucerna</span><span class="budget-row-amount">621.62 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Interlaken</span><span class="budget-row-amount">778.34 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Milán</span><span class="budget-row-amount">465.49 <span class="budget-row-currency">USD</span></span></div>
+      </div>
+
+      <div class="budget-category">
+        <div class="budget-cat-title">🚆 Transportes</div>
+        <div class="budget-row"><span class="budget-row-name">Vuelos ITA (ida y vuelta)</span><span class="budget-row-amount">5.295 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Tren Roma–Bari</span><span class="budget-row-amount">96 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Tren Bari–Florencia</span><span class="budget-row-amount">260 <span class="budget-row-currency">EUR</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Auto Puglia (Ford Puma)</span><span class="budget-row-amount">390 <span class="budget-row-currency">USD</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Auto Toscana (VW T-ROC)</span><span class="budget-row-amount">377.625 <span class="budget-row-currency">ARS</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Auto Suiza (VW T-Cross)</span><span class="budget-row-amount">698.250 <span class="budget-row-currency">ARS</span></span></div>
+      </div>
+
+      <div class="budget-category">
+        <div class="budget-cat-title">🎟 Actividades</div>
+        <div class="budget-row"><span class="budget-row-name">Vaticano</span><span class="budget-row-amount">160 <span class="budget-row-currency">EUR</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Coliseo</span><span class="budget-row-amount">72 <span class="budget-row-currency">EUR</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Galleria dell'Accademia</span><span class="budget-row-amount">96 <span class="budget-row-currency">EUR</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Duomo di Milano</span><span class="budget-row-amount">104 <span class="budget-row-currency">EUR</span></span></div>
+      </div>
+
+      <div class="budget-category">
+        <div class="budget-cat-title">➕ Adicionales</div>
+        <div class="budget-row"><span class="budget-row-name">Estacionamiento Buenos Aires</span><span class="budget-row-amount">270.000 <span class="budget-row-currency">ARS</span></span></div>
+        <div class="budget-row"><span class="budget-row-name">Selección de asientos</span><span class="budget-row-amount">488 <span class="budget-row-currency">USD</span></span></div>
+      </div>
+
+      <div style="background:var(--dark);color:var(--cream);border-radius:12px;padding:20px 24px;margin-top:8px;">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.5);margin-bottom:12px;">TOTAL ESTIMADO</div>
+        <div style="font-family:'Playfair Display',serif;font-size:32px;">~USD 13.109</div>
+        <div style="font-size:12px;color:rgba(245,240,232,0.5);margin-top:4px;">+ €1.920 + $1.345.875 ARS</div>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Event delegation for expandable day cards
+document.addEventListener('click', function(e) {
+  if (e.target.closest('a')) return; // don't toggle if clicking a link
+  const card = e.target.closest('.day-card');
+  if (card) card.classList.toggle('open');
+});
+</script>
+</body>
+</html>
