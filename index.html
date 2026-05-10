@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Italia &amp; Suiza 2026">
-<meta name="theme-color" content="#1a1612">
 <title>Italia & Suiza 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script>
@@ -14,13 +12,14 @@
     var card = el.closest ? el.closest('.day-card') : el.parentNode;
     if (card) card.classList.toggle('open');
   }
-  function showTab(id, ev) {
+  function showTab(id, btn) {
     document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
     var sec = document.getElementById(id);
     if (sec) sec.classList.add('active');
-    var btn = (ev && ev.currentTarget) ? ev.currentTarget : (ev && ev.target) ? ev.target : null;
-    if (btn) btn.classList.add('active');
+    // Accept btn as explicit param (Safari PWA safe) OR fallback to event.target
+    var target = btn || (typeof event !== 'undefined' && event && event.target ? event.target : null);
+    if (target) target.classList.add('active');
   }
 </script>
 <style>
@@ -106,6 +105,7 @@
     display: flex;
     overflow-x: auto;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
   .tabs-inner::-webkit-scrollbar { display: none; }
   .tab-btn {
@@ -1067,12 +1067,12 @@
 
 <div class="tabs">
   <div class="tabs-inner">
-    <button class="tab-btn active" onclick=\"showTab('itinerario',event)\">📋 Itinerario</button>
-    <button class="tab-btn" onclick=\"showTab('alojamientos',event)\">🏨 Alojamientos</button>
-    <button class="tab-btn" onclick=\"showTab('transportes',event)\">🚆 Transportes</button>
-    <button class="tab-btn" onclick=\"showTab('actividades',event)\">🎟 Actividades</button>
-    <button class="tab-btn" onclick=\"showTab('gastos',event)\">💶 Gastos</button>
-    <button class="tab-btn" onclick=\"showTab('restaurantes',event)\">🍽 Restaurantes</button>
+    <button class="tab-btn active" onclick="showTab('itinerario',this)">📋 Itinerario</button>
+    <button class="tab-btn" onclick="showTab('alojamientos',this)">🏨 Alojamientos</button>
+    <button class="tab-btn" onclick="showTab('transportes',this)">🚆 Transportes</button>
+    <button class="tab-btn" onclick="showTab('actividades',this)">🎟 Actividades</button>
+    <button class="tab-btn" onclick="showTab('gastos',this)">💶 Gastos</button>
+    <button class="tab-btn" onclick="showTab('restaurantes',this)">🍽 Restaurantes</button>
   </div>
 </div>
 
@@ -2452,9 +2452,9 @@
     <div class="section-title">Alojamientos</div>
     <div class="section-sub">Tildá ✓ cuando hayas pagado · Los pagos se suman automáticamente a Gastos</div>
     <div style="background:var(--warm-white);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;gap:16px;flex-wrap:wrap;">
-      <div style="flex:1;min-width:120px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);">Total alojamientos</div><div id="aloj-total-display" style="font-size:22px;font-weight:700;color:var(--dark);margin-top:4px;">calculando…</div></div>
-      <div style="flex:1;min-width:120px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);">Ya pagado</div><div id="aloj-pagado-display" style="font-size:22px;font-weight:700;color:var(--olive);margin-top:4px;">$0</div></div>
-      <div style="flex:1;min-width:120px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);">Pendiente</div><div id="aloj-pendiente-display" style="font-size:22px;font-weight:700;color:var(--terracotta);margin-top:4px;">calculando…</div></div>
+      <div style="flex:1;min-width:120px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);">Total alojamientos</div><div id="aloj-total-display" style="font-size:22px;font-weight:700;color:var(--dark);margin-top:4px;">—</div></div>
+      <div style="flex:1;min-width:120px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);">Ya pagado</div><div id="aloj-pagado-display" style="font-size:22px;font-weight:700;color:var(--olive);margin-top:4px;">—</div></div>
+      <div style="flex:1;min-width:120px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);">Pendiente</div><div id="aloj-pendiente-display" style="font-size:22px;font-weight:700;color:var(--terracotta);margin-top:4px;">—</div></div>
     </div>
     <div class="cards-grid">
 
@@ -3039,15 +3039,15 @@
 
       <div style="background:var(--dark);color:var(--cream);border-radius:12px;padding:20px 24px;margin-top:8px;">
         <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.5);margin-bottom:8px;">TOTAL PAGADO (conocido)</div>
-        <div style="font-family:'Playfair Display',serif;font-size:26px;">~USD 10.308</div>
+        <div style="font-family:'Playfair Display',serif;font-size:26px;" id="gastos-resumen-pagado">~USD 10.308</div>
         <div style="font-size:12px;color:rgba(245,240,232,0.5);margin-top:4px;">Avión + Aloj pagados + Trenes + Autos + Actividades + Extras</div>
         <div style="margin-top:12px;border-top:1px solid rgba(245,240,232,0.15);padding-top:12px;">
           <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,0.5);margin-bottom:4px;">PENDIENTE DE PAGO</div>
-          <div style="font-size:18px;font-weight:600;color:var(--gold);">€1.090 + USD 152 + 27 CHF</div>
+          <div style="font-size:18px;font-weight:600;color:var(--gold);" id="gastos-resumen-pendiente">€1.090 + USD 152</div>
           <div style="font-size:11px;color:rgba(245,240,232,0.4);margin-top:4px;">Incluye: saldo Puglia, Toscana, Interlaken, impuestos turísticos</div>
         </div>
         <div style="margin-top:12px;border-top:1px solid rgba(245,240,232,0.15);padding-top:12px;">
-          <div style="font-size:11px;color:rgba(245,240,232,0.4);">Por persona (÷4) pagado: ~USD 2.577</div>
+          <div style="font-size:11px;color:rgba(245,240,232,0.4);" id="gastos-resumen-perpersona">Por persona (÷4) pagado: ~USD 2.577</div>
         </div>
       </div>
     </div>
@@ -3126,111 +3126,135 @@
 </div>
 
 <script>
-  // ═══════════════════════════════════════════════════════════
-  // VIAJE ITALIA & SUIZA 2026 — App Script
-  // Safari iOS / PWA / Chrome compatible
-  // ═══════════════════════════════════════════════════════════
+  // ── PASSWORD ──────────────────────────────────────────
+  const PASS_KEY = 'viaje2026_auth';
+  const CORRECT  = 'Davicino9488';
 
-  // ── SAFARI-SAFE POLYFILLS ─────────────────────────────────
-  // Object.entries polyfill for very old Safari
-  if (!Object.entries) {
-    Object.entries = function(obj) {
-      return Object.keys(obj).map(function(k) { return [k, obj[k]]; });
-    };
-  }
-  // Object.values polyfill
-  if (!Object.values) {
-    Object.values = function(obj) {
-      return Object.keys(obj).map(function(k) { return obj[k]; });
-    };
-  }
-
-  // ── SAFE localStorage WRAPPER ─────────────────────────────
-  // In Safari PWA mode, localStorage can throw in some edge cases
-  var LS = {
-    get: function(key, fallback) {
-      try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-      catch(e) { return fallback; }
-    },
-    set: function(key, val) {
-      try { localStorage.setItem(key, JSON.stringify(val)); }
-      catch(e) { /* quota or private mode — fail silently */ }
+  function checkPass() {
+    var val = document.getElementById('pass-input').value;
+    if (val === CORRECT) {
+      localStorage.setItem(PASS_KEY, '1');
+      document.getElementById('password-screen').classList.add('hidden');
+      initAll();
+    } else {
+      var err = document.getElementById('pass-error');
+      err.textContent = 'Contraseña incorrecta';
+      document.getElementById('pass-input').value = '';
+      document.getElementById('pass-input').focus();
+      setTimeout(function(){ err.textContent=''; }, 2500);
     }
-  };
-
-  // ── SAFE NUMBER FORMAT ────────────────────────────────────
-  // toLocaleString('es-AR') crashes in some Safari versions
-  function fmtNum(n, decimals) {
-    if (typeof n !== 'number' || isNaN(n)) n = 0;
-    var d = (decimals !== undefined) ? decimals : 0;
-    // Use fixed then replace dot for comma manually — guaranteed cross-browser
-    var parts = n.toFixed(d).split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    return parts.join(',');
   }
 
-  // ── STATE ─────────────────────────────────────────────────
-  var gastos = LS.get('viaje_gastos', []);
-  var restoState = LS.get('viaje_restos', {});
-  var manualRestos = LS.get('viaje_restos_manual', []);
-  var alojPagos = LS.get('aloj2_pagos', {});
+  function togglePass() {
+    var inp = document.getElementById('pass-input');
+    var btn = document.getElementById('pass-toggle-btn');
+    if (inp.type === 'password') { inp.type='text'; inp.style.letterSpacing='1px'; btn.textContent='🙈'; }
+    else { inp.type='password'; inp.style.letterSpacing='3px'; btn.textContent='👁'; }
+  }
+  document.getElementById('pass-input').addEventListener('keydown', function(e){ if(e.key==='Enter') checkPass(); });
 
-  // ── ALOJAMIENTO CONFIG ───────────────────────────────────
+  function _bootApp() {
+    if (localStorage.getItem(PASS_KEY) === '1') {
+      document.getElementById('password-screen').classList.add('hidden');
+      initAll();
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _bootApp);
+  } else {
+    _bootApp();
+  }
+
+  // ── TODAY HIGHLIGHT ───────────────────────────────────
+  (function() {
+    var today = new Date();
+    var y = today.getFullYear(), m = today.getMonth()+1, d = today.getDate();
+    if (y !== 2026) return;
+    if ((m === 5 && d >= 11) || (m === 6 && d <= 4)) {
+      var dayNum = String(d);
+      var monthName = m === 5 ? 'May' : 'Jun';
+      document.querySelectorAll('.day-block').forEach(function(block) {
+        var numEl = block.querySelector('.day-num');
+        var nameEl = block.querySelector('.day-name');
+        if (!numEl || !nameEl) return;
+        if (numEl.textContent.trim() === dayNum && nameEl.textContent.includes(monthName)) {
+          numEl.classList.add('today');
+          block.querySelector('.day-label').classList.add('today-label');
+          var card = block.querySelector('.day-card');
+          if (card) {
+            card.classList.add('today-card', 'open');
+            setTimeout(function(){ card.scrollIntoView({behavior:'smooth', block:'center'}); }, 600);
+          }
+        }
+      });
+    }
+  })();
+
+  // ── ALOJAMIENTOS ──────────────────────────────────────
+  // Config: {id, monto, moneda, preloaded (ya pagado por defecto)}
   var ALOJ_CONFIG = {
-    'bsas':       { monto: 180,    moneda: 'USD', preloaded: false },
-    'roma':       { monto: 874,    moneda: 'USD', preloaded: true  },
-    'matera':     { monto: 149,    moneda: 'EUR', preloaded: true  },
-    'puglia':     { monto: 336,    moneda: 'EUR', preloaded: false },
-    'bari':       { monto: 222.55, moneda: 'USD', preloaded: true  },
-    'florencia':  { monto: 585.77, moneda: 'USD', preloaded: true  },
-    'toscana':    { monto: 600,    moneda: 'EUR', preloaded: false },
-    'verona':     { monto: 0,      moneda: null,  preloaded: true,  gratis: true },
-    'lucerna':    { monto: 621.62, moneda: 'USD', preloaded: true  },
-    'interlaken': { monto: 678.60, moneda: 'EUR', preloaded: false, custom: true },
-    'milan':      { monto: 465.45, moneda: 'USD', preloaded: true  },
+    'bsas':      { monto: 180,    moneda: 'USD', preloaded: false },
+    'roma':      { monto: 874,    moneda: 'USD', preloaded: true  },
+    'matera':    { monto: 149,    moneda: 'EUR', preloaded: true  },
+    'puglia':    { monto: 336,    moneda: 'EUR', preloaded: false },
+    'bari':      { monto: 222.55, moneda: 'USD', preloaded: true  },
+    'florencia': { monto: 585.77, moneda: 'USD', preloaded: true  },
+    'toscana':   { monto: 600,    moneda: 'EUR', preloaded: false },
+    'verona':    { monto: 0,      moneda: null,  preloaded: true, gratis: true },
+    'lucerna':   { monto: 621.62, moneda: 'USD', preloaded: true  },
+    'interlaken':{ monto: 678.60, moneda: 'EUR', preloaded: false, custom: true },
+    'milan':     { monto: 465.45, moneda: 'USD', preloaded: true  },
   };
 
-  // ── ALOJAMIENTO FUNCTIONS ─────────────────────────────────
+  var alojPagos = JSON.parse(localStorage.getItem('aloj2_pagos') || '{}');
+
   function toggleAlojPago(labelEl, id, monto, moneda, ev) {
-    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    if (ev) ev.stopPropagation();
     var cb = labelEl.querySelector('input[type=checkbox]');
     var nowPaid = !cb.checked;
     cb.checked = nowPaid;
     labelEl.classList.toggle('checked', nowPaid);
-    var spanEl = labelEl.querySelector('span');
-    if (spanEl) spanEl.textContent = nowPaid ? 'Pagado ✓' : 'Marcar como pagado';
+
+    // Update badge
     var badge = document.getElementById('badge-' + id);
-    if (badge) {
-      badge.textContent = nowPaid ? 'PAGADO' : 'PENDIENTE';
-      badge.className = 'badge ' + (nowPaid ? 'paid' : 'partial');
-    }
+    if (badge) { badge.textContent = nowPaid ? 'PAGADO' : 'PENDIENTE'; badge.className = 'badge ' + (nowPaid ? 'paid' : 'partial'); }
+
+    // Track payment
     alojPagos[id] = { paid: nowPaid, monto: monto, moneda: moneda };
-    LS.set('aloj2_pagos', alojPagos);
-    if (nowPaid && monto > 0) { addAlojGasto(id, monto, moneda); }
-    else { removeAlojGasto(id); }
+    localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
+
+    // Add to gastos if marking as paid
+    if (nowPaid && monto > 0) {
+      addAlojGasto(id, monto, moneda);
+    } else if (!nowPaid) {
+      removeAlojGasto(id);
+    }
     updateAlojTotals();
   }
 
   function toggleAlojPagoCustom(labelEl, id, ev) {
-    if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+    if (ev) ev.stopPropagation();
     var cb = labelEl.querySelector('input[type=checkbox]');
     if (cb.checked) {
+      // Currently paid → uncheck/reset
       cb.checked = false;
       labelEl.classList.remove('checked');
       var spanEl = labelEl.querySelector('span');
       if (spanEl) spanEl.textContent = 'Marcar como pagado';
       var badge = document.getElementById('badge-' + id);
       if (badge) { badge.textContent = 'NO PAGADO'; badge.className = 'badge partial'; }
-      alojPagos[id] = { paid: false, monto: 0, moneda: 'EUR' };
-      LS.set('aloj2_pagos', alojPagos);
+      alojPagos[id] = { paid: false, monto: 0, moneda: 'USD' };
+      localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
       removeAlojGasto(id);
       updateAlojTotals();
       return;
     }
+    // Not checked → need monto
     var montoEl = document.getElementById(id + '-precio-input');
     var monedaEl = document.getElementById(id + '-moneda-input');
-    var monto = montoEl ? (parseFloat(montoEl.value) || 0) : 0;
-    var moneda = monedaEl ? monedaEl.value : 'EUR';
+    var monto = montoEl ? parseFloat(montoEl.value) || 0 : 0;
+    var moneda = monedaEl ? monedaEl.value : 'USD';
     if (!monto) { alert('Primero ingresá el monto a pagar'); return; }
     cb.checked = true;
     labelEl.classList.add('checked');
@@ -3239,156 +3263,115 @@
     var badge2 = document.getElementById('badge-' + id);
     if (badge2) { badge2.textContent = 'PAGADO'; badge2.className = 'badge paid'; }
     alojPagos[id] = { paid: true, monto: monto, moneda: moneda };
-    LS.set('aloj2_pagos', alojPagos);
+    localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
     addAlojGasto(id, monto, moneda);
     updateAlojTotals();
   }
 
   function addAlojGasto(alojId, monto, moneda) {
     var nombres = {
-      bsas:'Alojamiento Buenos Aires', roma:'Alojamiento Roma',
-      matera:'Alojamiento Matera', puglia:'Alojamiento Puglia (saldo)',
-      bari:'Alojamiento Bari', florencia:'Alojamiento Florencia',
+      bsas:'Alojamiento Buenos Aires', roma:'Alojamiento Roma', matera:'Alojamiento Matera',
+      puglia:'Alojamiento Puglia (saldo)', bari:'Alojamiento Bari', florencia:'Alojamiento Florencia',
       toscana:'Alojamiento Toscana', lucerna:'Alojamiento Lucerna',
       interlaken:'Alojamiento Interlaken', milan:'Alojamiento Milán'
     };
-    var g = {
-      id: 'aloj_' + alojId,
-      cat: '🏨 Alojamiento',
-      nombre: nombres[alojId] || 'Alojamiento',
-      monto: monto, moneda: moneda,
-      ciudad: '', fecha: '', fromAloj: true
-    };
-    var idx = -1;
-    for (var i = 0; i < gastos.length; i++) {
-      if (gastos[i].id === 'aloj_' + alojId) { idx = i; break; }
-    }
-    if (idx >= 0) gastos[idx] = g; else gastos.push(g);
-    LS.set('viaje_gastos', gastos);
+    var g = { id: 'aloj_'+alojId, cat:'🏨 Alojamiento', nombre: nombres[alojId]||'Alojamiento', monto: monto, moneda: moneda, ciudad:'', fecha:'', fromAloj: true };
+    var existing = gastos.findIndex(function(x){ return x.id === 'aloj_'+alojId; });
+    if (existing >= 0) gastos[existing] = g; else gastos.push(g);
+    localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
     renderGastos();
   }
 
   function removeAlojGasto(alojId) {
-    gastos = gastos.filter(function(g) { return g.id !== 'aloj_' + alojId; });
-    LS.set('viaje_gastos', gastos);
+    gastos = gastos.filter(function(g){ return g.id !== 'aloj_'+alojId; });
+    localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
     renderGastos();
   }
 
   function updateAlojTotals() {
-    // Sum known totals from config (fixed amounts, all EUR or USD)
-    var totalUSD = 0, totalEUR = 0;
-    var keys = Object.keys(ALOJ_CONFIG);
-    for (var i = 0; i < keys.length; i++) {
-      var id = keys[i], cfg = ALOJ_CONFIG[id];
-      if (cfg.gratis || !cfg.monto) continue;
+    var totalUSD = 0, totalEUR = 0, pagadoUSD = 0, pagadoEUR = 0;
+    Object.entries(ALOJ_CONFIG).forEach(function(entry) {
+      var id = entry[0], cfg = entry[1];
+      if (cfg.gratis || !cfg.monto) return;
       if (cfg.moneda === 'USD') totalUSD += cfg.monto;
       else if (cfg.moneda === 'EUR') totalEUR += cfg.monto;
-    }
-    // Add interlaken custom amount if entered
+    });
+    // Add custom interlaken if set
     var iEl = document.getElementById('interlaken-precio-input');
     var iMEl = document.getElementById('interlaken-moneda-input');
-    if (iEl) {
-      var iVal = parseFloat(iEl.value) || 0;
-      if (iVal > 0) {
-        var iMon = iMEl ? iMEl.value : 'EUR';
-        if (iMon === 'EUR') totalEUR += iVal;
-        else totalUSD += iVal;
-      }
+    if (iEl && parseFloat(iEl.value)) {
+      var v = parseFloat(iEl.value);
+      if (iMEl && iMEl.value === 'EUR') totalEUR += v; else totalUSD += v;
     }
-
-    // Sum what's been paid
-    var pagadoUSD = 0, pagadoEUR = 0;
-    var pkeys = Object.keys(alojPagos);
-    for (var j = 0; j < pkeys.length; j++) {
-      var p = alojPagos[pkeys[j]];
-      if (!p || !p.paid || !p.monto) continue;
+    Object.entries(alojPagos).forEach(function(entry) {
+      var id = entry[0], p = entry[1];
+      if (!p.paid || !p.monto) return;
       if (p.moneda === 'USD') pagadoUSD += p.monto;
       else if (p.moneda === 'EUR') pagadoEUR += p.monto;
-    }
-
+    });
     var pendUSD = Math.max(0, totalUSD - pagadoUSD);
     var pendEUR = Math.max(0, totalEUR - pagadoEUR);
 
-    // Build display strings — always show both currencies if > 0
-    function buildStr(usd, eur) {
-      var parts = [];
-      if (usd > 0) parts.push('USD ' + fmtNum(usd, 2));
-      if (eur > 0) parts.push('€' + fmtNum(eur, 2));
-      return parts.length ? parts.join(' + ') : '$0';
-    }
-
+    var fmt = function(n){ return n.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0}); };
     var totalEl = document.getElementById('aloj-total-display');
     var pagadoEl = document.getElementById('aloj-pagado-display');
     var pendEl = document.getElementById('aloj-pendiente-display');
-
-    if (totalEl) totalEl.textContent = buildStr(totalUSD, totalEUR);
-    if (pagadoEl) pagadoEl.textContent = buildStr(pagadoUSD, pagadoEUR);
-    if (pendEl) pendEl.textContent = buildStr(pendUSD, pendEUR);
+    if (totalEl) totalEl.textContent = 'USD '+fmt(totalUSD) + (totalEUR>0?' + €'+fmt(totalEUR):'');
+    if (pagadoEl) pagadoEl.textContent = 'USD '+fmt(pagadoUSD) + (pagadoEUR>0?' + €'+fmt(pagadoEUR):'');
+    if (pendEl) pendEl.textContent = 'USD '+fmt(pendUSD) + (pendEUR>0?' + €'+fmt(pendEUR):'');
+    // Sync gastos dark summary box
+    updateGastosTotal();
   }
 
   function loadAlojPagos() {
-    // Seed preloaded paid entries if not yet in storage
-    var keys = Object.keys(ALOJ_CONFIG);
-    var changed = false;
-    for (var i = 0; i < keys.length; i++) {
-      var id = keys[i], cfg = ALOJ_CONFIG[id];
-      if (cfg.gratis || cfg.custom) continue;
+    // Pre-load the ones marked as already paid in config
+    Object.entries(ALOJ_CONFIG).forEach(function(entry) {
+      var id = entry[0], cfg = entry[1];
+      if (cfg.gratis) return;
       if (cfg.preloaded && !alojPagos[id]) {
         alojPagos[id] = { paid: true, monto: cfg.monto, moneda: cfg.moneda };
-        changed = true;
       }
-    }
-    if (changed) LS.set('aloj2_pagos', alojPagos);
+    });
+    localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
 
-    // Sync checkbox UI from stored state
-    var pkeys = Object.keys(alojPagos);
-    for (var j = 0; j < pkeys.length; j++) {
-      var pid = pkeys[j], p = alojPagos[pid];
-      var lbl = document.getElementById('lbl-' + pid);
-      if (!lbl) continue;
+    // Sync checkboxes state from saved data
+    Object.entries(alojPagos).forEach(function(entry) {
+      var id = entry[0], p = entry[1];
+      var lbl = document.getElementById('lbl-' + id);
+      if (!lbl) return;
       var cb = lbl.querySelector('input[type=checkbox]');
-      if (!cb) continue;
-      var spanEl = lbl.querySelector('span');
-      if (p.paid) {
-        cb.checked = true;
-        lbl.classList.add('checked');
-        if (spanEl) spanEl.textContent = (pid === 'interlaken') ? 'Pagado ✓ (tocá para desmarcar)' : 'Pagado ✓';
-      } else {
-        cb.checked = false;
-        lbl.classList.remove('checked');
-        if (spanEl) spanEl.textContent = 'Marcar como pagado';
-      }
-      var cfg2 = ALOJ_CONFIG[pid];
-      var badge = document.getElementById('badge-' + pid);
-      if (badge && cfg2 && !cfg2.gratis) {
+      if (!cb) return;
+      if (p.paid) { cb.checked = true; lbl.classList.add('checked'); }
+      else { cb.checked = false; lbl.classList.remove('checked'); }
+      var badge = document.getElementById('badge-' + id);
+      if (badge && !ALOJ_CONFIG[id]?.gratis) {
         badge.textContent = p.paid ? 'PAGADO' : 'PENDIENTE';
         badge.className = 'badge ' + (p.paid ? 'paid' : 'partial');
       }
-    }
+    });
 
-    // Seed gastos from paid aloj (avoid duplicates)
-    for (var k = 0; k < pkeys.length; k++) {
-      var aid = pkeys[k], ap = alojPagos[aid];
-      if (!ap || !ap.paid || !ap.monto) continue;
-      var exists = false;
-      for (var gi = 0; gi < gastos.length; gi++) {
-        if (gastos[gi].id === 'aloj_' + aid) { exists = true; break; }
+    // Add pre-loaded paid ones to gastos
+    Object.entries(alojPagos).forEach(function(entry) {
+      var id = entry[0], p = entry[1];
+      if (p.paid && p.monto > 0) {
+        var existing = gastos.findIndex(function(x){ return x.id === 'aloj_'+id; });
+        if (existing < 0) addAlojGasto(id, p.monto, p.moneda);
       }
-      if (!exists) addAlojGasto(aid, ap.monto, ap.moneda);
-    }
+    });
 
-    // Restore interlaken input value if saved
-    var iP = alojPagos['interlaken'];
-    if (iP && iP.paid && iP.monto > 0) {
+    // Restore interlaken input if there is a saved paid amount
+    var iPagos = alojPagos['interlaken'];
+    if (iPagos && iPagos.paid && iPagos.monto > 0) {
       var iInput = document.getElementById('interlaken-precio-input');
-      if (iInput) iInput.value = iP.monto;
+      if (iInput) { iInput.value = iPagos.monto; }
+      // Update the label span
       var iLbl = document.getElementById('lbl-interlaken');
-      if (iLbl) {
-        var iCb = iLbl.querySelector('input[type=checkbox]');
-        if (iCb) iCb.checked = true;
-        iLbl.classList.add('checked');
+      if (iLbl) { 
         var iSpan = iLbl.querySelector('span');
         if (iSpan) iSpan.textContent = 'Pagado ✓ (tocá para desmarcar)';
+        iLbl.classList.add('checked');
+        var iCb = iLbl.querySelector('input[type=checkbox]');
+        if (iCb) iCb.checked = true;
       }
       var iBadge = document.getElementById('badge-interlaken');
       if (iBadge) { iBadge.textContent = 'PAGADO'; iBadge.className = 'badge paid'; }
@@ -3397,517 +3380,339 @@
     updateAlojTotals();
   }
 
-  // ── GASTOS ────────────────────────────────────────────────
+  // ── GASTOS ────────────────────────────────────────────
+  var gastos = JSON.parse(localStorage.getItem('viaje_gastos') || '[]');
+
   function agregarGasto() {
-    var cat    = document.getElementById('gasto-cat').value;
+    var cat = document.getElementById('gasto-cat').value;
     var nombre = document.getElementById('gasto-nombre').value.trim();
-    var monto  = parseFloat(document.getElementById('gasto-monto').value);
+    var montoVal = document.getElementById('gasto-monto').value;
+    var monto = parseFloat(montoVal);
     var moneda = document.getElementById('gasto-moneda').value;
     var ciudad = document.getElementById('gasto-ciudad').value.trim();
-    var fecha  = document.getElementById('gasto-fecha').value.trim();
+    var fecha = document.getElementById('gasto-fecha').value.trim();
     if (!cat || !nombre || isNaN(monto) || monto <= 0) {
       alert('Completá categoría, descripción y monto'); return;
     }
-    gastos.push({ id: Date.now(), cat: cat, nombre: nombre, monto: monto,
-                  moneda: moneda, ciudad: ciudad, fecha: fecha });
-    LS.set('viaje_gastos', gastos);
-    document.getElementById('gasto-cat').value    = '';
+    var g = { id: Date.now(), cat: cat, nombre: nombre, monto: monto, moneda: moneda, ciudad: ciudad, fecha: fecha };
+    gastos.push(g);
+    localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
+    document.getElementById('gasto-cat').value = '';
     document.getElementById('gasto-nombre').value = '';
-    document.getElementById('gasto-monto').value  = '';
+    document.getElementById('gasto-monto').value = '';
     document.getElementById('gasto-ciudad').value = '';
-    document.getElementById('gasto-fecha').value  = '';
+    document.getElementById('gasto-fecha').value = '';
     renderGastos();
   }
 
   function borrarGasto(id) {
-    // id arrives as number from onclick — convert
-    id = typeof id === 'string' ? id : String(id);
-    var g = null;
-    for (var i = 0; i < gastos.length; i++) {
-      if (String(gastos[i].id) === id) { g = gastos[i]; break; }
-    }
-    if (g && g.fromAloj) {
-      alert('Este gasto es de un alojamiento pagado. Desmarcálo en la pestaña Alojamientos.');
-      return;
-    }
-    gastos = gastos.filter(function(x) { return String(x.id) !== id; });
-    LS.set('viaje_gastos', gastos);
+    // Don't allow deleting aloj auto-entries
+    var g = gastos.find(function(x){ return x.id === id; });
+    if (g && g.fromAloj) { alert('Este gasto corresponde a un alojamiento marcado como pagado. Para eliminarlo, desmarcá el pago en la pestaña Alojamientos.'); return; }
+    gastos = gastos.filter(function(x){ return x.id !== id; });
+    localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
     renderGastos();
-  }
-
-  function getRestoGastos() {
-    var result = [];
-    var rsKeys = Object.keys(restoState);
-    for (var i = 0; i < rsKeys.length; i++) {
-      var s = restoState[rsKeys[i]];
-      if (s && s.visited && s.monto && parseFloat(s.monto) > 0) {
-        result.push({ id: 'resto_' + rsKeys[i], cat: '🍽 Comida', nombre: 'Restaurante',
-                      monto: parseFloat(s.monto), moneda: 'EUR', ciudad: '', fecha: '' });
-      }
-    }
-    for (var j = 0; j < manualRestos.length; j++) {
-      var r = manualRestos[j];
-      if (r && r.monto > 0) {
-        result.push({ id: 'restom_' + r.id, cat: '🍽 Comida', nombre: r.nombre || 'Restaurante',
-                      monto: parseFloat(r.monto), moneda: r.moneda || 'EUR',
-                      ciudad: r.ciudad || '', fecha: '' });
-      }
-    }
-    return result;
   }
 
   function renderGastos() {
     var lista = document.getElementById('gastos-lista');
-    var wrap  = document.getElementById('gastos-lista-wrap');
+    var wrap = document.getElementById('gastos-lista-wrap');
     if (!lista || !wrap) return;
+    // Merge with restaurant gastos for display in totals
+    var allGastos = gastos.concat(getRestoGastos());
+    if (!allGastos.length) { wrap.style.display='none'; updateGastosTotal(); return; }
+    wrap.style.display = 'block';
 
-    // Non-aloj user gastos grouped by category
+    // Only show non-resto in main list (restos shown in their tab)
     var byCat = {};
-    for (var i = 0; i < gastos.length; i++) {
-      var g = gastos[i];
+    gastos.forEach(function(g) {
       if (!byCat[g.cat]) byCat[g.cat] = [];
       byCat[g.cat].push(g);
-    }
+    });
 
-    var catKeys = Object.keys(byCat);
-    if (!catKeys.length) {
-      lista.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0;">Sin gastos cargados aún.</div>';
-      wrap.style.display = 'none';
-    } else {
-      wrap.style.display = 'block';
-      var html = '';
-      for (var ci = 0; ci < catKeys.length; ci++) {
-        var cat = catKeys[ci], items = byCat[cat];
-        html += '<div style="margin-bottom:20px;">' +
-          '<div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">' + cat + '</div>';
-        for (var ii = 0; ii < items.length; ii++) {
-          var gi = items[ii];
-          var delBtn = gi.fromAloj ? '' : '<button class="gasto-del-btn" onclick="borrarGasto(\'' + gi.id + '\')">✕</button>';
-          html += '<div class="gasto-list-item">' +
-            '<div class="gasto-list-info"><div class="gasto-list-name">' + gi.nombre + '</div>' +
-            '<div class="gasto-list-meta">' + (gi.ciudad || '') + (gi.fecha ? ' · ' + gi.fecha : '') + '</div></div>' +
-            '<div class="gasto-list-amount">' + fmtNum(gi.monto, 2) + ' ' + gi.moneda + '</div>' +
-            delBtn + '</div>';
-        }
-        html += '</div>';
-      }
-      lista.innerHTML = html;
+    if (!Object.keys(byCat).length) { lista.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0;">Sin gastos cargados aún.</div>'; }
+    else {
+      lista.innerHTML = Object.entries(byCat).map(function(entry) {
+        var cat = entry[0], items = entry[1];
+        return '<div style="margin-bottom:20px;">' +
+          '<div style="font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">' + cat + '</div>' +
+          items.map(function(g) {
+            var delBtn = g.fromAloj ? '' : '<button class="gasto-del-btn" onclick="borrarGasto(' + g.id + ')">✕</button>';
+            return '<div class="gasto-list-item">' +
+              '<div class="gasto-list-info"><div class="gasto-list-name">' + g.nombre + '</div>' +
+              '<div class="gasto-list-meta">' + (g.ciudad||'') + (g.fecha?' · '+g.fecha:'') + '</div></div>' +
+              '<div class="gasto-list-amount">' + g.monto.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' ' + g.moneda + '</div>' +
+              delBtn + '</div>';
+          }).join('') + '</div>';
+      }).join('');
     }
-
     updateGastosTotal();
+  }
+
+  function getRestoGastos() {
+    var result = [];
+    var restoState = JSON.parse(localStorage.getItem('viaje_restos') || '{}');
+    Object.entries(restoState).forEach(function(entry) {
+      var key = entry[0], s = entry[1];
+      if (s.visited && s.monto && parseFloat(s.monto) > 0) {
+        result.push({ id: 'resto_'+key, cat:'🍽 Comida', nombre: 'Restaurante', monto: parseFloat(s.monto), moneda: s.moneda||'EUR', ciudad:'', fecha:'' });
+      }
+    });
+    // Also include manual resto entries
+    var manualRestos = JSON.parse(localStorage.getItem('viaje_restos_manual') || '[]');
+    manualRestos.forEach(function(r) {
+      if (r.monto > 0) result.push({ id: 'restom_'+r.id, cat:'🍽 Comida', nombre: r.nombre||'Restaurante', monto: r.monto, moneda: r.moneda||'EUR', ciudad: r.ciudad||'', fecha:'' });
+    });
+    return result;
   }
 
   function updateGastosTotal() {
-    // All gastos + restaurant entries, excluding alojamientos (shown separately)
-    var all = gastos.concat(getRestoGastos());
-    var EUR = 0, USD = 0, CHF = 0, ARS = 0;
-    for (var i = 0; i < all.length; i++) {
-      var g = all[i];
-      if (g.cat === '🏨 Alojamiento') continue;
-      if      (g.moneda === 'EUR') EUR += g.monto;
-      else if (g.moneda === 'USD') USD += g.monto;
-      else if (g.moneda === 'CHF') CHF += g.monto;
-      else if (g.moneda === 'ARS') ARS += g.monto;
+    // Include manual gastos + restaurant gastos
+    var allGastos = gastos.concat(getRestoGastos());
+    var totals = { EUR: 0, USD: 0, CHF: 0, ARS: 0 };
+    allGastos.forEach(function(g) { 
+      if (g.cat === '🏨 Alojamiento') return; // aloj shown separately
+      if(totals[g.moneda]!==undefined) totals[g.moneda] += g.monto; 
+    });
+    var parts = [];
+    if(totals.EUR>0) parts.push('€'+totals.EUR.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}));
+    if(totals.USD>0) parts.push('USD '+totals.USD.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}));
+    if(totals.CHF>0) parts.push('CHF '+totals.CHF.toFixed(2));
+    if(totals.ARS>0) parts.push('$'+totals.ARS.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0})+' ARS');
+
+    var extraEl = document.getElementById('gastos-extra-total');
+    if(extraEl) extraEl.textContent = parts.length ? parts.join(' + ') : '€0';
+    var extraPerEl = document.getElementById('per-persona-extra');
+    if(extraPerEl) extraPerEl.textContent = totals.EUR>0 ? '€'+(totals.EUR/4).toFixed(2) : '€0';
+
+    // ── Actualizar caja oscura de resumen (Bug 2: ahora reactivo) ──
+    // Base fija conocida: vuelos + trenes + autos + actividades = ~USD 8.227
+    var BASE_PAGADO_USD = 8227;
+    // Sumar alojamientos pagados dinámicamente
+    var alojPagadoUSD = 0, alojPagadoEUR = 0;
+    Object.entries(alojPagos).forEach(function(entry) {
+      var p = entry[1];
+      if (p.paid && p.monto > 0) {
+        if (p.moneda === 'USD') alojPagadoUSD += p.monto;
+        else if (p.moneda === 'EUR') alojPagadoEUR += p.monto;
+      }
+    });
+    var totalPagadoUSD = BASE_PAGADO_USD + alojPagadoUSD + totals.USD;
+    var resumenPagadoEl = document.getElementById('gastos-resumen-pagado');
+    if (resumenPagadoEl) {
+      var pagadoStr = '~USD ' + totalPagadoUSD.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0});
+      if (alojPagadoEUR > 0) pagadoStr += ' + €' + alojPagadoEUR.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0});
+      if (totals.EUR > 0) pagadoStr += (alojPagadoEUR>0?'':' + €') + (alojPagadoEUR>0 ? '' : totals.EUR.toFixed(0));
+      resumenPagadoEl.textContent = pagadoStr;
     }
 
-    var parts = [];
-    if (EUR > 0) parts.push('€' + fmtNum(EUR, 2));
-    if (USD > 0) parts.push('USD ' + fmtNum(USD, 2));
-    if (CHF > 0) parts.push('CHF ' + fmtNum(CHF, 2));
-    if (ARS > 0) parts.push('$' + fmtNum(ARS, 0) + ' ARS');
-    var totalStr = parts.length ? parts.join(' + ') : '€0';
-
-    var extraEl    = document.getElementById('gastos-extra-total');
-    var perPerEl   = document.getElementById('per-persona-extra');
-
-    if (extraEl) extraEl.textContent = totalStr;
-    if (perPerEl) perPerEl.textContent = EUR > 0 ? '€' + fmtNum(EUR / 4, 2) : '€0';
+    // Calcular pendiente de alojamiento (EUR + USD)
+    var totalConfigUSD = 0, totalConfigEUR = 0;
+    Object.entries(ALOJ_CONFIG).forEach(function(entry) {
+      var cfg = entry[1];
+      if (cfg.gratis || !cfg.monto) return;
+      if (cfg.moneda === 'USD') totalConfigUSD += cfg.monto;
+      else if (cfg.moneda === 'EUR') totalConfigEUR += cfg.monto;
+    });
+    var iEl = document.getElementById('interlaken-precio-input');
+    var iMEl = document.getElementById('interlaken-moneda-input');
+    if (iEl && parseFloat(iEl.value)) {
+      var iv = parseFloat(iEl.value);
+      if (iMEl && iMEl.value === 'EUR') totalConfigEUR += iv; else totalConfigUSD += iv;
+    }
+    var pendUSD = Math.max(0, totalConfigUSD - alojPagadoUSD);
+    var pendEUR = Math.max(0, totalConfigEUR - alojPagadoEUR);
+    var resumenPendEl = document.getElementById('gastos-resumen-pendiente');
+    if (resumenPendEl) {
+      var pendParts = [];
+      if (pendEUR > 0) pendParts.push('€' + pendEUR.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0}));
+      if (pendUSD > 0) pendParts.push('USD ' + pendUSD.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:0}));
+      resumenPendEl.textContent = pendParts.length ? pendParts.join(' + ') : '€0';
+    }
+    var resumenPerEl = document.getElementById('gastos-resumen-perpersona');
+    if (resumenPerEl) {
+      resumenPerEl.textContent = 'Por persona (÷4) pagado: ~USD ' + Math.round(totalPagadoUSD/4).toLocaleString('es-AR');
+    }
   }
 
-  // ── RESTAURANTS ───────────────────────────────────────────
+  // ── RESTAURANT TRACKER ────────────────────────────────
   var RESTOS = {
     'resto-list-roma1': [
-      {n:"All'Antico Vinaio",     u:"https://www.google.com/maps/search/?api=1&query=All+Antico+Vinaio+Roma"},
-      {n:"Osteria da Fortunata",  u:"https://www.google.com/maps/search/?api=1&query=Osteria+da+Fortunata+Pantheon+Roma"},
-      {n:"Armando al Pantheon",   u:"https://www.google.com/maps/search/?api=1&query=Armando+al+Pantheon+Roma"},
-      {n:"Spaghetto Roma",        u:"https://www.google.com/maps/search/?api=1&query=Spaghetto+Roma"},
-      {n:"Pasta In Corso",        u:"https://www.google.com/maps/search/?api=1&query=Pasta+In+Corso+Roma"},
-      {n:"Pane e Salame",         u:"https://www.google.com/maps/search/?api=1&query=Pane+e+Salame+Roma"}
+      {n:"All'Antico Vinaio",u:"https://www.google.com/maps/search/?api=1&query=All+Antico+Vinaio+Roma"},
+      {n:"Osteria da Fortunata",u:"https://www.google.com/maps/search/?api=1&query=Osteria+da+Fortunata+Pantheon+Roma"},
+      {n:"Armando al Pantheon",u:"https://www.google.com/maps/search/?api=1&query=Armando+al+Pantheon+Roma"},
+      {n:"Spaghetto Roma",u:"https://www.google.com/maps/search/?api=1&query=Spaghetto+Roma"},
+      {n:"Pasta In Corso",u:"https://www.google.com/maps/search/?api=1&query=Pasta+In+Corso+Roma"},
+      {n:"Pane e Salame",u:"https://www.google.com/maps/search/?api=1&query=Pane+e+Salame+Roma"},
     ],
     'resto-list-roma2': [
-      {n:"Trapizzino",            u:"https://www.google.com/maps/search/?api=1&query=Trapizzino+Trastevere+Roma"},
-      {n:"Tonnarello",            u:"https://www.google.com/maps/search/?api=1&query=Tonnarello+Trastevere+Roma"},
-      {n:"Otello",                u:"https://www.google.com/maps/search/?api=1&query=Otello+Trastevere+Roma"},
-      {n:"Trattoria Da Enzo",     u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Da+Enzo+Trastevere+Roma"},
-      {n:"NANNARELLA",            u:"https://www.google.com/maps/search/?api=1&query=NANNARELLA+Roma"}
+      {n:"Trapizzino",u:"https://www.google.com/maps/search/?api=1&query=Trapizzino+Trastevere+Roma"},
+      {n:"Tonnarello",u:"https://www.google.com/maps/search/?api=1&query=Tonnarello+Trastevere+Roma"},
+      {n:"Otello",u:"https://www.google.com/maps/search/?api=1&query=Otello+Trastevere+Roma"},
+      {n:"Trattoria Da Enzo",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Da+Enzo+Trastevere+Roma"},
+      {n:"NANNARELLA",u:"https://www.google.com/maps/search/?api=1&query=NANNARELLA+Roma"},
     ],
     'resto-list-roma3': [
-      {n:"Oppio Caffe",           u:"https://www.google.com/maps/search/?api=1&query=Oppio+Caffe+Roma+Colosseo"},
-      {n:"La Biga Wine Food",     u:"https://www.google.com/maps/search/?api=1&query=La+Biga+Wine+Food+Roma"},
-      {n:"al42 by Pasta Chef",    u:"https://www.google.com/maps/search/?api=1&query=al42+by+Pasta+Chef+Roma"},
-      {n:"Saporizzo",             u:"https://www.google.com/maps/search/?api=1&query=Saporizzo+Roma"}
+      {n:"Oppio Caffè",u:"https://www.google.com/maps/search/?api=1&query=Oppio+Caffe+Roma+Colosseo"},
+      {n:"La Biga Wine Food",u:"https://www.google.com/maps/search/?api=1&query=La+Biga+Wine+Food+Roma"},
+      {n:"al42 by Pasta Chef",u:"https://www.google.com/maps/search/?api=1&query=al42+by+Pasta+Chef+Roma"},
+      {n:"Saporizzo",u:"https://www.google.com/maps/search/?api=1&query=Saporizzo+Roma"},
     ],
     'resto-list-matera': [
-      {n:"Il Forno Sassi Martino",u:"https://www.google.com/maps/search/?api=1&query=Il+Forno+Sassi+Martino+Matera"},
-      {n:"Pasteggiando",          u:"https://www.google.com/maps/search/?api=1&query=Pasteggiando+Matera"},
+      {n:"Il Forno Sassi - Martino",u:"https://www.google.com/maps/search/?api=1&query=Il+Forno+Sassi+Martino+Matera"},
+      {n:"Pasteggiando",u:"https://www.google.com/maps/search/?api=1&query=Pasteggiando+The+Way+Of+Pasta+Matera"},
       {n:"Che Capperi Street Food",u:"https://www.google.com/maps/search/?api=1&query=Che+Capperi+Street+Food+Matera"},
-      {n:"Morgan Restaurant",     u:"https://www.google.com/maps/search/?api=1&query=Morgan+Restaurant+Matera"},
-      {n:"Trattoria del Caveoso", u:"https://www.google.com/maps/search/?api=1&query=Trattoria+del+Caveoso+Matera"}
+      {n:"Morgan Restaurant",u:"https://www.google.com/maps/search/?api=1&query=Morgan+Restaurant+Matera"},
+      {n:"Trattoria del Caveoso",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+del+Caveoso+Matera"},
     ],
     'resto-list-puglia': [
-      {n:"00 Doppiozero Lecce",   u:"https://www.google.com/maps/search/?api=1&query=Doppiozero+Lecce"},
-      {n:"La Vecchia Osteria da Totu",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Totu+Lecce"},
-      {n:"Casa Nova Alberobello", u:"https://www.google.com/maps/search/?api=1&query=Casa+Nova+Il+Ristorante+Alberobello"},
-      {n:"Osteria del Tempo Perso",u:"https://www.google.com/maps/search/?api=1&query=Osteria+del+Tempo+Perso+Ostuni"},
-      {n:"Room 21 Monopoli",      u:"https://www.google.com/maps/search/?api=1&query=Room+21+Monopoli"},
-      {n:"Bina Ristorante Locorotondo",u:"https://www.google.com/maps/search/?api=1&query=Bina+Ristorante+Locorotondo"}
+      {n:"00 Doppiozero (Lecce)",u:"https://www.google.com/maps/search/?api=1&query=00+Doppiozero+Lecce"},
+      {n:"La Vecchia Osteria da Totu",u:"https://www.google.com/maps/search/?api=1&query=La+Vecchia+Osteria+da+Totu+Lecce"},
+      {n:"Casa Nova Il Ristorante (Alberobello)",u:"https://www.google.com/maps/search/?api=1&query=Casa+Nova+Il+Ristorante+Alberobello"},
+      {n:"Osteria del Tempo Perso (Ostuni)",u:"https://www.google.com/maps/search/?api=1&query=Osteria+del+Tempo+Perso+Ostuni"},
+      {n:"Room 21 (Monopoli)",u:"https://www.google.com/maps/search/?api=1&query=Room+21+Monopoli"},
+      {n:"Bina Ristorante (Locorotondo)",u:"https://www.google.com/maps/search/?api=1&query=Bina+Ristorante+di+Puglia+Locorotondo"},
     ],
     'resto-list-firenze': [
-      {n:"Trattoria Mario",       u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Mario+Firenze"},
-      {n:"Trattoria Za Za",       u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Za+Za+Firenze"},
-      {n:"La Terrazza Rooftop",   u:"https://www.google.com/maps/search/?api=1&query=La+Terrazza+Rooftop+Bar+Firenze"},
-      {n:"Osteria Santo Spirito", u:"https://www.google.com/maps/search/?api=1&query=Osteria+Santo+Spirito+Firenze"}
+      {n:"Trattoria Mario",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Mario+Florencia"},
+      {n:"Trattoria Za Za",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Za+Za+Florencia"},
+      {n:"La Terrazza Rooftop Bar",u:"https://www.google.com/maps/search/?api=1&query=La+Terrazza+Rooftop+Bar+Florencia"},
+      {n:"Osteria Santo Spirito",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Santo+Spirito+Florencia"},
     ],
     'resto-list-toscana': [
-      {n:"Le Vecchie Mura San Gimignano",u:"https://www.google.com/maps/search/?api=1&query=Le+Vecchie+Mura+San+Gimignano"},
-      {n:"Osteria Delle Catene",  u:"https://www.google.com/maps/search/?api=1&query=Osteria+Delle+Catene+San+Gimignano"},
-      {n:"Osteria Osticcio Montalcino",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Osticcio+Montalcino"},
-      {n:"Trattoria Latte di Luna",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Latte+di+Luna+Pienza"},
-      {n:"Osteria Acquacheta",    u:"https://www.google.com/maps/search/?api=1&query=Osteria+Acquacheta+Montepulciano"}
+      {n:"Le Vecchie Mura (San Gimignano)",u:"https://www.google.com/maps/search/?api=1&query=Le+Vecchie+Mura+San+Gimignano"},
+      {n:"Osteria Delle Catene (San Gimignano)",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Delle+Catene+San+Gimignano"},
+      {n:"Osteria Osticcio (Montalcino)",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Osticcio+Montalcino"},
+      {n:"Trattoria Latte di Luna (Pienza)",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+Latte+di+Luna+Pienza"},
+      {n:"Osteria Acquacheta (Montepulciano)",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Acquacheta+Montepulciano"},
     ],
     'resto-list-verona': [
-      {n:"Osteria Sottoriva",     u:"https://www.google.com/maps/search/?api=1&query=Osteria+Sottoriva+Verona"},
-      {n:"Trattoria al Pompiere", u:"https://www.google.com/maps/search/?api=1&query=Trattoria+al+Pompiere+Verona"},
-      {n:"Pizzeria Liston",       u:"https://www.google.com/maps/search/?api=1&query=Pizzeria+Liston+Verona"}
+      {n:"Osteria Sottoriva",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Sottoriva+Verona"},
+      {n:"Trattoria al Pompiere",u:"https://www.google.com/maps/search/?api=1&query=Trattoria+al+Pompiere+Verona"},
+      {n:"Pizzeria Liston",u:"https://www.google.com/maps/search/?api=1&query=Pizzeria+Liston+Verona"},
     ],
     'resto-list-venezia': [
-      {n:"Pizzeria L Angelo",     u:"https://www.google.com/maps/search/?api=1&query=Pizzeria+L+Angelo+Venezia"},
-      {n:"Baci e Pasta",          u:"https://www.google.com/maps/search/?api=1&query=Baci+e+Pasta+Venezia"},
-      {n:"Osteria Ai Pugni",      u:"https://www.google.com/maps/search/?api=1&query=Osteria+Ai+Pugni+Venezia"},
-      {n:"Osteria Enoteca Ai Artisti",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Enoteca+Ai+Artisti+Venezia"}
+      {n:"Pizzeria L Angelo",u:"https://www.google.com/maps/search/?api=1&query=Pizzeria+L+Angelo+Venezia"},
+      {n:"Baci e Pasta",u:"https://www.google.com/maps/search/?api=1&query=Baci+e+Pasta+Venezia"},
+      {n:"Osteria Ai Pugni",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Ai+Pugni+Venezia"},
+      {n:"Osteria Enoteca Ai Artisti",u:"https://www.google.com/maps/search/?api=1&query=Osteria+Enoteca+Ai+Artisti+Venezia"},
     ],
     'resto-list-swiss': [
-      {n:"La Cucina Pizza Pasta Lucerna",u:"https://www.google.com/maps/search/?api=1&query=La+Cucina+Pizza+Pasta+Luzern"},
-      {n:"Wirtshaus Galliker",    u:"https://www.google.com/maps/search/?api=1&query=Wirtshaus+Galliker+Luzern"}
+      {n:"La Cucina Pizza Pasta (Lucerna)",u:"https://www.google.com/maps/search/?api=1&query=Ristorante+La+Cucina+Pizza+Pasta+Lucerna"},
+      {n:"Wirtshaus Galliker (Lucerna)",u:"https://www.google.com/maps/search/?api=1&query=Wirtshaus+Galliker+Luzern"},
     ],
     'resto-list-milan': [
-      {n:"Ristorante Nabucco",    u:"https://www.google.com/maps/search/?api=1&query=Ristorante+Nabucco+Milano"},
-      {n:"Taglieri e Bicchieri",  u:"https://www.google.com/maps/search/?api=1&query=Taglieri+e+Bicchieri+Milano"},
-      {n:"Panino Buono Como",     u:"https://www.google.com/maps/search/?api=1&query=Panino+Buono+Como"}
-    ]
+      {n:"Ristorante Nabucco",u:"https://www.google.com/maps/search/?api=1&query=Ristorante+Nabucco+Milano+Brera"},
+      {n:"Taglieri e Bicchieri",u:"https://www.google.com/maps/search/?api=1&query=Taglieri+e+Bicchieri+Milano"},
+      {n:"Panino Buono (Como)",u:"https://www.google.com/maps/search/?api=1&query=Panino+Buono+Como"},
+    ],
   };
 
-  // ── RENDER RESTOS — Safari-safe, no inline event handlers ──
-  function renderRestos() {
-    var listIds = Object.keys(RESTOS);
-    for (var li = 0; li < listIds.length; li++) {
-      var listId = listIds[li];
-      var items  = RESTOS[listId];
-      var el     = document.getElementById(listId);
-      if (!el) continue;
+  var restoState = JSON.parse(localStorage.getItem('viaje_restos') || '{}');
+  var manualRestos = JSON.parse(localStorage.getItem('viaje_restos_manual') || '[]');
 
-      // Build HTML without inline quotes in onclick/onchange
-      // Use data-attributes + delegated events instead
-      var html = '';
-      for (var ii = 0; ii < items.length; ii++) {
-        var r       = items[ii];
-        var key     = listId + '__' + ii; // safe key using index, no special chars
-        var state   = restoState[key] || {};
+  function renderRestos() {
+    Object.entries(RESTOS).forEach(function(entry) {
+      var listId = entry[0], items = entry[1];
+      var el = document.getElementById(listId);
+      if (!el) return;
+      el.innerHTML = items.map(function(r) {
+        var key = listId + '_' + r.n;
+        var state = restoState[key] || {};
         var visited = state.visited || false;
-        html += '<div class="resto-item" data-key="' + key + '">' +
-          '<div class="resto-check ' + (visited ? 'visited' : '') + '" data-action="toggle" data-key="' + key + '"></div>' +
+        var safeKey = key.replace(/'/g, "\\'");
+        return '<div class="resto-item">' +
+          '<div class="resto-check ' + (visited?'visited':'') + '" onclick="toggleResto(\'' + safeKey + '\')"></div>' +
           '<div class="resto-info">' +
-          '<div class="resto-name"' + (visited ? ' style="text-decoration:line-through;color:var(--muted)"' : '') + '>' +
-          escHtml(r.n) + '</div>' +
-          (visited && state.monto ? '<div class="resto-meta">💶 ' + state.monto + ' €</div>' : '') +
+          '<div class="resto-name" style="' + (visited?'text-decoration:line-through;color:var(--muted)':'') + '">' + r.n + '</div>' +
+          (visited && state.monto ? '<div class="resto-meta">💶 ' + state.monto + ' EUR</div>' : '') +
           '</div>' +
           '<div class="resto-gasto-wrap">' +
-          '<input class="resto-gasto-input' + (visited ? ' visible' : '') + '" type="number" ' +
-            'inputmode="decimal" placeholder="€" value="' + (state.monto || '') + '" ' +
-            'data-action="monto" data-key="' + key + '">' +
+          '<input class="resto-gasto-input ' + (visited?'visible':'') + '" type="number" inputmode="decimal" placeholder="€" value="' + (state.monto||'') + '" oninput="saveRestoMonto(\'' + safeKey + '\',this.value)" onchange="saveRestoMonto(\'' + safeKey + '\',this.value)">' +
           '<a class="resto-map-btn" href="' + r.u + '" target="_blank">📍</a>' +
           '</div></div>';
-      }
-
-      // Manual entries section
-      html += renderManualRestoHTML(listId);
-
-      el.innerHTML = html;
-    }
-
-    // Attach delegated listeners to each list container (Safari-safe)
-    attachRestoListeners();
+      }).join('') + renderManualRestoSection(listId);
+    });
     updateRestoTotal();
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  function renderManualRestoHTML(listId) {
-    var entries = manualRestos.filter(function(r) { return r.listId === listId; });
-    var rows = '';
-    for (var i = 0; i < entries.length; i++) {
-      var r = entries[i];
-      rows += '<div class="resto-item" style="border-top:1px dashed var(--border)">' +
+  function renderManualRestoSection(listId) {
+    var entries = manualRestos.filter(function(r){ return r.listId === listId; });
+    var rows = entries.map(function(r) {
+      return '<div class="resto-item" style="border-top:1px dashed var(--border)">' +
         '<div class="resto-check visited"></div>' +
-        '<div class="resto-info"><div class="resto-name">' + escHtml(r.nombre) + '</div>' +
-        (r.monto ? '<div class="resto-meta">💶 ' + r.monto + ' €</div>' : '') +
+        '<div class="resto-info"><div class="resto-name">' + r.nombre + '</div>' +
+        (r.monto ? '<div class="resto-meta">💶 ' + r.monto + ' ' + (r.moneda||'EUR') + '</div>' : '') +
         '</div>' +
         '<div class="resto-gasto-wrap">' +
-        '<span style="font-size:12px;font-weight:600;color:var(--terracotta);">' + (r.monto ? fmtNum(r.monto, 2) + ' €' : '') + '</span>' +
-        '<button data-action="del-manual" data-id="' + r.id + '" ' +
-          'style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:4px 8px;min-width:44px;min-height:44px;">✕</button>' +
+        '<span style="font-size:12px;font-weight:600;color:var(--terracotta);">' + (r.monto?r.monto+' '+(r.moneda||'EUR'):'') + '</span>' +
+        '<button onclick="borrarManualResto(' + r.id + ')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:2px 6px;">✕</button>' +
         '</div></div>';
-    }
-    return '<div class="manual-resto-section" data-listid="' + listId + '" ' +
-      'style="margin-top:12px;padding-top:10px;border-top:2px dashed var(--border);">' +
+    }).join('');
+    return '<div style="margin-top:12px;padding-top:10px;border-top:2px dashed var(--border);">' +
       '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Agregar restaurante</div>' +
       rows +
       '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">' +
-      '<input type="text" placeholder="Nombre del lugar" data-manual-name="' + listId + '" ' +
-        'class="gasto-input" style="flex:2;min-width:120px;padding:8px 10px;font-size:16px;" autocomplete="off">' +
-      '<input type="number" inputmode="decimal" placeholder="€" data-manual-monto="' + listId + '" ' +
-        'class="gasto-input" style="flex:1;min-width:70px;padding:8px 10px;font-size:16px;">' +
-      '<button data-action="add-manual" data-listid="' + listId + '" ' +
-        'class="gasto-add-btn" style="flex:none;width:auto;padding:8px 16px;font-size:14px;min-height:44px;">+</button>' +
+      '<input type="text" placeholder="Nombre del lugar" id="mn_name_'+listId+'" class="gasto-input" style="flex:2;min-width:120px;padding:8px 10px;font-size:12px;">' +
+      '<input type="number" inputmode="decimal" placeholder="Gasto €" id="mn_monto_'+listId+'" class="gasto-input" style="flex:1;min-width:70px;padding:8px 10px;font-size:12px;">' +
+      '<button onclick="agregarManualResto(\'' + listId + '\')" class="gasto-add-btn" style="flex:none;width:auto;padding:8px 14px;font-size:12px;">+</button>' +
       '</div></div>';
   }
 
-  // Single delegated listener per resto container — avoids iOS onclick issues
-  var _restoListenersAttached = false;
-  function attachRestoListeners() {
-    if (_restoListenersAttached) return;
-    _restoListenersAttached = true;
-
-    // Use the restaurantes section as the single delegate root
-    var root = document.getElementById('restaurantes');
-    if (!root) return;
-
-    // Handle taps/clicks
-    root.addEventListener('click', function(e) {
-      var t = e.target;
-
-      // Toggle visited
-      var toggleEl = t.closest ? t.closest('[data-action="toggle"]') : null;
-      if (toggleEl) {
-        var key = toggleEl.getAttribute('data-key');
-        if (key) { doToggleResto(key); return; }
-      }
-
-      // Delete manual entry
-      var delEl = t.closest ? t.closest('[data-action="del-manual"]') : null;
-      if (delEl) {
-        var mid = parseInt(delEl.getAttribute('data-id'), 10);
-        doDeleteManualResto(mid);
-        return;
-      }
-
-      // Add manual entry
-      var addEl = t.closest ? t.closest('[data-action="add-manual"]') : null;
-      if (addEl) {
-        var lid = addEl.getAttribute('data-listid');
-        doAddManualResto(lid);
-        return;
-      }
-    });
-
-    // Handle monto input changes — use 'input' event for real-time on iOS
-    root.addEventListener('input', function(e) {
-      var t = e.target;
-      if (t.getAttribute('data-action') === 'monto') {
-        var key = t.getAttribute('data-key');
-        if (key) doSaveRestoMonto(key, t.value);
-      }
-    });
-    // Also 'change' for desktop
-    root.addEventListener('change', function(e) {
-      var t = e.target;
-      if (t.getAttribute('data-action') === 'monto') {
-        var key = t.getAttribute('data-key');
-        if (key) doSaveRestoMonto(key, t.value);
-      }
-    });
+  function agregarManualResto(listId) {
+    var nameEl = document.getElementById('mn_name_' + listId);
+    var montoEl = document.getElementById('mn_monto_' + listId);
+    if (!nameEl || !nameEl.value.trim()) { alert('Escribí el nombre del lugar'); return; }
+    var entry = { id: Date.now(), listId: listId, nombre: nameEl.value.trim(), monto: parseFloat(montoEl.value)||0, moneda: 'EUR', ciudad: '' };
+    manualRestos.push(entry);
+    localStorage.setItem('viaje_restos_manual', JSON.stringify(manualRestos));
+    renderRestos();
+    updateGastosTotal();
   }
 
-  function doToggleResto(key) {
+  function borrarManualResto(id) {
+    manualRestos = manualRestos.filter(function(r){ return r.id !== id; });
+    localStorage.setItem('viaje_restos_manual', JSON.stringify(manualRestos));
+    renderRestos();
+    updateGastosTotal();
+  }
+
+  function toggleResto(key) {
     var state = restoState[key] || {};
     state.visited = !state.visited;
     restoState[key] = state;
-    LS.set('viaje_restos', restoState);
+    localStorage.setItem('viaje_restos', JSON.stringify(restoState));
     renderRestos();
     updateGastosTotal();
   }
 
-  function doSaveRestoMonto(key, val) {
+  function saveRestoMonto(key, val) {
     if (!restoState[key]) restoState[key] = {};
-    restoState[key].monto = parseFloat(val) || 0;
+    restoState[key].monto = val;
     restoState[key].moneda = 'EUR';
-    LS.set('viaje_restos', restoState);
+    localStorage.setItem('viaje_restos', JSON.stringify(restoState));
     updateRestoTotal();
-    updateGastosTotal();
-  }
-
-  function doAddManualResto(listId) {
-    var nameEl  = document.querySelector('[data-manual-name="' + listId + '"]');
-    var montoEl = document.querySelector('[data-manual-monto="' + listId + '"]');
-    var nombre  = nameEl ? nameEl.value.trim() : '';
-    if (!nombre) { alert('Escribí el nombre del lugar'); return; }
-    var monto = montoEl ? (parseFloat(montoEl.value) || 0) : 0;
-    manualRestos.push({ id: Date.now(), listId: listId, nombre: nombre,
-                        monto: monto, moneda: 'EUR', ciudad: '' });
-    LS.set('viaje_restos_manual', manualRestos);
-    _restoListenersAttached = false; // force re-attach after re-render
-    renderRestos();
-    updateGastosTotal();
-  }
-
-  function doDeleteManualResto(id) {
-    manualRestos = manualRestos.filter(function(r) { return r.id !== id; });
-    LS.set('viaje_restos_manual', manualRestos);
-    _restoListenersAttached = false;
-    renderRestos();
     updateGastosTotal();
   }
 
   function updateRestoTotal() {
     var total = 0;
-    var rsKeys = Object.keys(restoState);
-    for (var i = 0; i < rsKeys.length; i++) {
-      var s = restoState[rsKeys[i]];
-      if (s && s.visited && s.monto) total += parseFloat(s.monto) || 0;
-    }
-    for (var j = 0; j < manualRestos.length; j++) {
-      var r = manualRestos[j];
-      if (r && r.monto) total += parseFloat(r.monto) || 0;
-    }
-    var el  = document.getElementById('resto-total-display');
+    Object.values(restoState).forEach(function(s){ if(s.visited && s.monto) total += parseFloat(s.monto)||0; });
+    manualRestos.forEach(function(r){ if(r.monto) total += parseFloat(r.monto)||0; });
+    var el = document.getElementById('resto-total-display');
     var sub = document.getElementById('resto-total-sub');
-    if (el)  el.textContent  = '€' + fmtNum(total, 0);
-    if (sub) sub.textContent = 'Por persona: €' + fmtNum(total / 4, 0);
+    if(el) el.textContent = '€' + total.toFixed(0);
+    if(sub) sub.textContent = 'Por persona: €' + (total/4).toFixed(0);
   }
 
-  // ── INIT ──────────────────────────────────────────────────
+  // ── INIT ─────────────────────────────────────────────
   function initAll() {
-    // Re-read all state fresh from storage
-    gastos       = LS.get('viaje_gastos', []);
-    restoState   = LS.get('viaje_restos', {});
-    manualRestos = LS.get('viaje_restos_manual', []);
-    alojPagos    = LS.get('aloj2_pagos', {});
-
-    // Migrate old resto keys (listId_restoName → listId__index)
-    migrateRestoKeys();
-
-    // Run all initializers
-    loadAlojPagos();   // sets up aloj UI + seeds aloj gastos + calls updateAlojTotals
-    renderGastos();    // renders gasto list + calls updateGastosTotal
-    renderRestos();    // renders resto list + calls updateRestoTotal
-  }
-
-  // Migrate old string-based resto keys to index-based keys (one-time)
-  function migrateRestoKeys() {
-    var migrated = LS.get('viaje_restos_migrated', false);
-    if (migrated) return;
-    var newState = {};
-    var listIds = Object.keys(RESTOS);
-    for (var li = 0; li < listIds.length; li++) {
-      var listId = listIds[li];
-      var items  = RESTOS[listId];
-      for (var ii = 0; ii < items.length; ii++) {
-        var oldKey  = listId + '_' + items[ii].n;
-        var newKey  = listId + '__' + ii;
-        var oldData = restoState[oldKey];
-        if (oldData) {
-          newState[newKey] = oldData;
-        } else if (restoState[newKey]) {
-          newState[newKey] = restoState[newKey];
-        }
-      }
-    }
-    restoState = newState;
-    LS.set('viaje_restos', restoState);
-    LS.set('viaje_restos_migrated', true);
-  }
-
-  // ── PASSWORD ──────────────────────────────────────────────
-  var PASS_KEY = 'viaje2026_auth';
-  var CORRECT  = 'Davicino9488';
-
-  function checkPass() {
-    var val = document.getElementById('pass-input').value;
-    if (val === CORRECT) {
-      LS.set(PASS_KEY, '1');
-      document.getElementById('password-screen').classList.add('hidden');
-      // Small delay ensures DOM is fully ready before init (critical for Safari PWA)
-      setTimeout(initAll, 50);
-    } else {
-      var err = document.getElementById('pass-error');
-      err.textContent = 'Contraseña incorrecta';
-      document.getElementById('pass-input').value = '';
-      document.getElementById('pass-input').focus();
-      setTimeout(function() { err.textContent = ''; }, 2500);
-    }
-  }
-
-  function togglePass() {
-    var inp = document.getElementById('pass-input');
-    var btn = document.getElementById('pass-toggle-btn');
-    if (inp.type === 'password') {
-      inp.type = 'text'; inp.style.letterSpacing = '1px'; btn.textContent = '🙈';
-    } else {
-      inp.type = 'password'; inp.style.letterSpacing = '3px'; btn.textContent = '👁';
-    }
-  }
-
-  document.getElementById('pass-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') checkPass();
-  });
-
-  // ── BOOT ──────────────────────────────────────────────────
-  // Use DOMContentLoaded to be safe in Safari PWA (no defer attribute support issues)
-  function boot() {
-    if (LS.get(PASS_KEY, null) === '1') {
-      var ps = document.getElementById('password-screen');
-      if (ps) ps.classList.add('hidden');
-      // Delay ensures all DOM is painted before we touch elements
-      setTimeout(initAll, 50);
-    }
-    // Today highlight
-    (function() {
-      var today = new Date();
-      var y = today.getFullYear(), m = today.getMonth() + 1, d = today.getDate();
-      if (y !== 2026) return;
-      if ((m === 5 && d >= 11) || (m === 6 && d <= 4)) {
-        var dayNum = String(d);
-        var monthName = m === 5 ? 'May' : 'Jun';
-        var blocks = document.querySelectorAll('.day-block');
-        for (var i = 0; i < blocks.length; i++) {
-          var block  = blocks[i];
-          var numEl  = block.querySelector('.day-num');
-          var nameEl = block.querySelector('.day-name');
-          if (!numEl || !nameEl) continue;
-          if (numEl.textContent.trim() === dayNum && nameEl.textContent.indexOf(monthName) >= 0) {
-            numEl.classList.add('today');
-            var dayLabelEl = block.querySelector('.day-label');
-            if (dayLabelEl) dayLabelEl.classList.add('today-label');
-            var card = block.querySelector('.day-card');
-            if (card) {
-              card.classList.add('today-card', 'open');
-              setTimeout(function() {
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 300);
-            }
-            break;
-          }
-        }
-      }
-    })();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
-  } else {
-    boot();
+    gastos = JSON.parse(localStorage.getItem('viaje_gastos') || '[]');
+    restoState = JSON.parse(localStorage.getItem('viaje_restos') || '{}');
+    manualRestos = JSON.parse(localStorage.getItem('viaje_restos_manual') || '[]');
+    loadAlojPagos();
+    renderGastos();
+    renderRestos();
   }
 </script>
 </body>
