@@ -1074,6 +1074,9 @@
     <button class="tab-btn" onclick="showTab('gastos',this)">💶 Gastos</button>
     <button class="tab-btn" onclick="showTab('restaurantes',this)">🍽 Restaurantes</button>
   </div>
+  <div style="text-align:center;font-size:11px;padding:3px 16px 5px;background:var(--warm-white);">
+    <span id="sync-status" style="color:var(--muted);transition:color 0.3s;"></span>
+  </div>
 </div>
 
 <div class="content">
@@ -2915,7 +2918,10 @@
 
   <!-- GASTOS -->
   <div id="gastos" class="section">
-    <div class="section-title">Gastos del Viaje</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+      <div class="section-title" style="margin-bottom:0;">Gastos del Viaje</div>
+      <button onclick="syncRead(function(){loadAlojPagos();renderGastos();renderRestos();})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;">↻ Actualizar</button>
+    </div>
     <div class="section-sub">Cargá tus gastos durante el viaje · 4 personas</div>
 
     <!-- RESUMEN OVERVIEW -->
@@ -3057,7 +3063,10 @@
 
   <!-- RESTAURANTES -->
   <div id="restaurantes" class="section">
-    <div class="section-title">Restaurantes</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+      <div class="section-title" style="margin-bottom:0;">Restaurantes</div>
+      <button onclick="syncRead(function(){renderRestos();})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;">↻ Actualizar</button>
+    </div>
     <div class="section-sub">Tildá los que fuiste · Anotá cuánto gastaste · Todo se guarda en el dispositivo</div>
 
     <div class="resto-tracker-card">
@@ -3223,6 +3232,7 @@
     // Track payment
     alojPagos[id] = { paid: nowPaid, monto: monto, moneda: moneda };
     localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
+    syncWrite('alojPagos', alojPagos);
 
     // Add to gastos if marking as paid
     if (nowPaid && monto > 0) {
@@ -3246,6 +3256,7 @@
       if (badge) { badge.textContent = 'NO PAGADO'; badge.className = 'badge partial'; }
       alojPagos[id] = { paid: false, monto: 0, moneda: 'USD' };
       localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
+      syncWrite('alojPagos', alojPagos);
       removeAlojGasto(id);
       updateAlojTotals();
       return;
@@ -3264,6 +3275,7 @@
     if (badge2) { badge2.textContent = 'PAGADO'; badge2.className = 'badge paid'; }
     alojPagos[id] = { paid: true, monto: monto, moneda: moneda };
     localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
+    syncWrite('alojPagos', alojPagos);
     addAlojGasto(id, monto, moneda);
     updateAlojTotals();
   }
@@ -3279,12 +3291,14 @@
     var existing = gastos.findIndex(function(x){ return x.id === 'aloj_'+alojId; });
     if (existing >= 0) gastos[existing] = g; else gastos.push(g);
     localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
+    syncWrite('gastos', gastos);
     renderGastos();
   }
 
   function removeAlojGasto(alojId) {
     gastos = gastos.filter(function(g){ return g.id !== 'aloj_'+alojId; });
     localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
+    syncWrite('gastos', gastos);
     renderGastos();
   }
 
@@ -3397,6 +3411,7 @@
     var g = { id: Date.now(), cat: cat, nombre: nombre, monto: monto, moneda: moneda, ciudad: ciudad, fecha: fecha };
     gastos.push(g);
     localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
+    syncWrite('gastos', gastos);
     document.getElementById('gasto-cat').value = '';
     document.getElementById('gasto-nombre').value = '';
     document.getElementById('gasto-monto').value = '';
@@ -3411,6 +3426,7 @@
     if (g && g.fromAloj) { alert('Este gasto corresponde a un alojamiento marcado como pagado. Para eliminarlo, desmarcá el pago en la pestaña Alojamientos.'); return; }
     gastos = gastos.filter(function(x){ return x.id !== id; });
     localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
+    syncWrite('gastos', gastos);
     renderGastos();
   }
 
@@ -3666,6 +3682,7 @@
     var entry = { id: Date.now(), listId: listId, nombre: nameEl.value.trim(), monto: parseFloat(montoEl.value)||0, moneda: 'EUR', ciudad: '' };
     manualRestos.push(entry);
     localStorage.setItem('viaje_restos_manual', JSON.stringify(manualRestos));
+    syncWrite('manualRestos', manualRestos);
     renderRestos();
     updateGastosTotal();
   }
@@ -3673,6 +3690,7 @@
   function borrarManualResto(id) {
     manualRestos = manualRestos.filter(function(r){ return r.id !== id; });
     localStorage.setItem('viaje_restos_manual', JSON.stringify(manualRestos));
+    syncWrite('manualRestos', manualRestos);
     renderRestos();
     updateGastosTotal();
   }
@@ -3682,6 +3700,7 @@
     state.visited = !state.visited;
     restoState[key] = state;
     localStorage.setItem('viaje_restos', JSON.stringify(restoState));
+    syncWrite('restoState', restoState);
     renderRestos();
     updateGastosTotal();
   }
@@ -3691,6 +3710,7 @@
     restoState[key].monto = val;
     restoState[key].moneda = 'EUR';
     localStorage.setItem('viaje_restos', JSON.stringify(restoState));
+    syncWrite('restoState', restoState);
     updateRestoTotal();
     updateGastosTotal();
   }
@@ -3705,14 +3725,115 @@
     if(sub) sub.textContent = 'Por persona: €' + (total/4).toFixed(0);
   }
 
+  // ══════════════════════════════════════════════════════════════
+  //  SINCRONIZACIÓN CON GOOGLE SHEETS
+  // ══════════════════════════════════════════════════════════════
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCxlUxx46JvzK-kUTze1EJQCkivV49ocg5PsoHDiV9euma2X3dSuVXblOxnCbEqY4F/exec';
+
+  // Indicador de estado de sync
+  function setSyncStatus(msg, color) {
+    var el = document.getElementById('sync-status');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = color || 'var(--muted)';
+  }
+
+  // Lee TODOS los datos desde Sheets y actualiza localStorage + UI
+  function syncRead(callback) {
+    if (!SCRIPT_URL || SCRIPT_URL === 'REEMPLAZAR_CON_TU_URL') {
+      // Sin URL configurada: modo local
+      if (callback) callback();
+      return;
+    }
+    setSyncStatus('↻ Sincronizando...', 'var(--gold)');
+    fetch(SCRIPT_URL + '?action=read', { method: 'GET' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        // Actualizar variables globales y localStorage
+        if (data.gastos !== undefined) {
+          gastos = data.gastos;
+          localStorage.setItem('viaje_gastos', JSON.stringify(gastos));
+        }
+        if (data.alojPagos !== undefined) {
+          alojPagos = data.alojPagos;
+          localStorage.setItem('aloj2_pagos', JSON.stringify(alojPagos));
+        }
+        if (data.restoState !== undefined) {
+          restoState = data.restoState;
+          localStorage.setItem('viaje_restos', JSON.stringify(restoState));
+        }
+        if (data.manualRestos !== undefined) {
+          manualRestos = data.manualRestos;
+          localStorage.setItem('viaje_restos_manual', JSON.stringify(manualRestos));
+        }
+        setSyncStatus('✓ Sincronizado', 'var(--olive)');
+        setTimeout(function(){ setSyncStatus(''); }, 2500);
+        if (callback) callback();
+      })
+      .catch(function(err) {
+        setSyncStatus('⚠ Sin conexión (datos locales)', 'var(--terracotta)');
+        setTimeout(function(){ setSyncStatus(''); }, 4000);
+        if (callback) callback(); // igual renderiza con datos locales
+      });
+  }
+
+  // Escribe UNA clave a Sheets (en background, no bloquea la UI)
+  function syncWrite(key, value) {
+    if (!SCRIPT_URL || SCRIPT_URL === 'REEMPLAZAR_CON_TU_URL') return;
+    setSyncStatus('↑ Guardando...', 'var(--gold)');
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'write', key: key, value: value })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        setSyncStatus('✓ Guardado', 'var(--olive)');
+        setTimeout(function(){ setSyncStatus(''); }, 2000);
+      })
+      .catch(function() {
+        setSyncStatus('⚠ Error al guardar', 'var(--terracotta)');
+        setTimeout(function(){ setSyncStatus(''); }, 4000);
+      });
+  }
+
+  // Auto-refresh cada 30 segundos cuando la app está abierta
+  var _syncInterval = null;
+  function startAutoSync() {
+    if (_syncInterval) clearInterval(_syncInterval);
+    _syncInterval = setInterval(function() {
+      syncRead(function() {
+        renderGastos();
+        renderRestos();
+        loadAlojPagos();
+      });
+    }, 30000);
+  }
+
   // ── INIT ─────────────────────────────────────────────
   function initAll() {
-    gastos = JSON.parse(localStorage.getItem('viaje_gastos') || '[]');
-    restoState = JSON.parse(localStorage.getItem('viaje_restos') || '{}');
-    manualRestos = JSON.parse(localStorage.getItem('viaje_restos_manual') || '[]');
+    // Cargar desde localStorage primero (respuesta inmediata)
+    gastos      = JSON.parse(localStorage.getItem('viaje_gastos')        || '[]');
+    alojPagos   = JSON.parse(localStorage.getItem('aloj2_pagos')         || '{}');
+    restoState  = JSON.parse(localStorage.getItem('viaje_restos')        || '{}');
+    manualRestos= JSON.parse(localStorage.getItem('viaje_restos_manual') || '[]');
+
+    // Renderizar inmediatamente con datos locales
     loadAlojPagos();
     renderGastos();
     renderRestos();
+
+    // Luego sincronizar con Sheets y re-renderizar
+    syncRead(function() {
+      loadAlojPagos();
+      renderGastos();
+      renderRestos();
+    });
+
+    // Auto-refresh cada 30s
+    startAutoSync();
   }
 </script>
 </body>
